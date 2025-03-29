@@ -1,0 +1,119 @@
+object Form1: TForm1
+  Left = -9
+  Height = 1090
+  Top = -9
+  Width = 1784
+  Caption = 'Form1'
+  ClientHeight = 1090
+  ClientWidth = 1784
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  object Image1: TImage
+    Left = 16
+    Height = 512
+    Top = 8
+    Width = 512
+    OnClick = Image1Click
+  end
+  object Image2: TImage
+    Left = 640
+    Height = 512
+    Top = 8
+    Width = 512
+    OnClick = Image2Click
+  end
+  object Button1: TButton
+    Left = 544
+    Height = 25
+    Top = 256
+    Width = 75
+    Caption = '<='
+    TabOrder = 0
+    OnClick = Button1Click
+  end
+  object Image3: TImage
+    Left = 16
+    Height = 512
+    Top = 544
+    Width = 512
+    OnClick = Image1Click
+  end
+  object Image4: TImage
+    Left = 552
+    Height = 512
+    Top = 544
+    Width = 512
+    OnClick = Image1Click
+  end
+  object Image5: TImage
+    Left = 1088
+    Height = 512
+    Top = 544
+    Width = 512
+    OnClick = Image1Click
+  end
+  object MainMenu1: TMainMenu
+    Left = 1440
+    Top = 38
+    object MenuItem1: TMenuItem
+      Caption = 'Arquivo'
+      Default = True
+      OnClick = MenuItem1Click
+      object MenuItem2: TMenuItem
+        Caption = 'Abrir'
+        OnClick = MenuItem2Click
+      end
+      object MenuItem3: TMenuItem
+        Caption = 'Salvar'
+      end
+      object MenuItem4: TMenuItem
+        Caption = 'Sair'
+        OnClick = MenuItem4Click
+      end
+    end
+    object MenuItem5: TMenuItem
+      Caption = 'Operações'
+      OnClick = MenuItem5Click
+      object MenuItem6: TMenuItem
+        Caption = 'Converter para cinza'
+        OnClick = MenuItem6Click
+      end
+      object MenuItem7: TMenuItem
+        Caption = 'Negativa Cinza'
+        OnClick = MenuItem7Click
+      end
+      object MenuItem8: TMenuItem
+        Caption = 'Negativa Colorida'
+        OnClick = MenuItem8Click
+      end
+      object MenuItem9: TMenuItem
+        Caption = 'SepararCanais'
+        OnClick = MenuItem9Click
+      end
+      object MenuItem12: TMenuItem
+        Caption = 'Aplicar Ruído Sal e Pimenta'
+        OnClick = MenuItem12Click
+      end
+      object MenuItem10: TMenuItem
+        Caption = 'Filtro Convolucional Média Vizinhança 8'
+        OnClick = MenuItem10Click
+      end
+      object MenuItem11: TMenuItem
+        Caption = 'Filtro Convolucional Mediana Vizinhança 8'
+        OnClick = MenuItem11Click
+      end
+      object MenuItem13: TMenuItem
+        Caption = 'Filtragem Baseada na Média de 10 Imagens'
+        OnClick = MenuItem13Click
+      end
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 1440
+    Top = 90
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 1440
+    Top = 141
+  end
+end
