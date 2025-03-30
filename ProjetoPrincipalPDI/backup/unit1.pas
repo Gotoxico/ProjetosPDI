@@ -205,8 +205,8 @@ begin
                end;
         end;
 
-     for x := 0 to largura do
-        for y := 0 to altura do
+     for x := 0 to largura - 1 do
+        for y := 0 to altura - 1 do
            begin
                somaR := 0;
                somaG := 0;
