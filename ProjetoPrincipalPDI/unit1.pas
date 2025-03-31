@@ -25,6 +25,7 @@ type
     MenuItem11: TMenuItem;
     MenuItem12: TMenuItem;
     MenuItem13: TMenuItem;
+    MenuItem14: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -43,8 +44,10 @@ type
     procedure MenuItem11Click(Sender: TObject);
     procedure MenuItem12Click(Sender: TObject);
     procedure MenuItem13Click(Sender: TObject);
+    procedure MenuItem14Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
@@ -60,7 +63,7 @@ type
 var
   Form1: TForm1;
   r, g, b, c, i, j, tamanho, quantidadeRuido, x, y, soma, media, u, d, e, mediana, temp: integer;
-  ime, ims: array[0..511, 0..511] of integer;
+  ime, ims, mag: array[0..511, 0..511] of integer;
   cor: TColor;
   mascara : array[0..2, 0..2] of integer;
   vetorTonsMediana : array[0..8] of integer;
@@ -235,6 +238,42 @@ begin
         im[i].Free;
 end;
 
+procedure TForm1.MenuItem14Click(Sender: TObject);
+var
+  gx, gy, min, max: Integer;
+
+begin
+
+  for j :=1 to Image1.Height-2 do
+      for i :=1 to Image1.Width-1 do
+      begin
+        gx:= -1*Ime[i-1, j-1] + 1*Ime[i+1, j-1]
+            -2*Ime[i-1, j]    + 2*Ime[i+1,j]-
+            -1*Ime[i-1, j+1]  + 1*Ime[i+1, j+1];
+        gy := -1*Ime[i-1, j-1] - 2*Ime[i,j-1] -1*Ime[i+1, j-1]
+              +1*Ime[i-1, j+1] + 2*Ime[i, j+1] + 1*Ime[i+1, j+1];
+
+        mag[i,j] := round(sqrt(gx*gx+gy*gy));
+      end;
+  min:= 9999999;
+  max := -9999999;
+
+  for j:=1 to Image1.Height-2 do
+   for i:=1 to Image1.Width-2 do
+       begin
+         if min > mag[i,j] then min := mag[i,j];
+         if max < mag[i,j] then max := mag[i,j];
+       end;
+
+   for j:=1 to Image1.Height-2 do
+   for i:=1 to Image1.Width-2 do
+       begin
+           Ims[i,j] := round((mag[i,j] - min) / (max - min) * 255);
+           Image2.Canvas.Pixels[i,j] := RGB(Ims[i,j], Ims[i,j], Ims[i,j]);
+       end;
+
+end;
+
 (*Passar Imagem da Direita para a Esquerda*)
 procedure TForm1.Button1Click(Sender: TObject);
 begin
@@ -257,6 +296,14 @@ procedure TForm1.MenuItem2Click(Sender: TObject);
 begin
   if (OpenDialog1.Execute)
      then Image1.Picture.LoadFromFile(OpenDialog1.FileName);
+end;
+
+procedure TForm1.MenuItem3Click(Sender: TObject);
+begin
+  if SaveDialog1.Execute then
+  begin
+    Image2.Picture.Bitmap.SaveToFile(SaveDialog1.FileName);
+  end;
 end;
 
 (*Fechar Formulário*)
