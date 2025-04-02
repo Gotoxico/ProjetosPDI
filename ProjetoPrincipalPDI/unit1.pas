@@ -14,11 +14,15 @@ type
 
   TForm1 = class(TForm)
     Button1: TButton;
+    Edit1: TEdit;
+    Edit2: TEdit;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
     Image4: TImage;
     Image5: TImage;
+    Label1: TLabel;
+    Label2: TLabel;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
@@ -26,6 +30,8 @@ type
     MenuItem12: TMenuItem;
     MenuItem13: TMenuItem;
     MenuItem14: TMenuItem;
+    MenuItem15: TMenuItem;
+    MenuItem16: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -37,14 +43,21 @@ type
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
     procedure Button1Click(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
+
     procedure FormCreate(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
+    procedure Image2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
+      );
+    procedure Label1Click(Sender: TObject);
     procedure MenuItem10Click(Sender: TObject);
     procedure MenuItem11Click(Sender: TObject);
     procedure MenuItem12Click(Sender: TObject);
     procedure MenuItem13Click(Sender: TObject);
     procedure MenuItem14Click(Sender: TObject);
+    procedure MenuItem15Click(Sender: TObject);
+    procedure MenuItem16Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
@@ -85,6 +98,17 @@ begin
 end;
 
 procedure TForm1.Image2Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  Edit1.Text:= IntToStr(Mag[x,y]);
+end;
+
+procedure TForm1.Label1Click(Sender: TObject);
 begin
 
 end;
@@ -237,42 +261,113 @@ begin
      for i := 1 to 10 do
         im[i].Free;
 end;
-
 procedure TForm1.MenuItem14Click(Sender: TObject);
 var
   gx, gy, min, max: Integer;
-
+  i, j: Integer;
 begin
 
-  for j :=1 to Image1.Height-2 do
-      for i :=1 to Image1.Width-1 do
-      begin
-        gx:= -1*Ime[i-1, j-1] + 1*Ime[i+1, j-1]
-            -2*Ime[i-1, j]    + 2*Ime[i+1,j]-
-            -1*Ime[i-1, j+1]  + 1*Ime[i+1, j+1];
-        gy := -1*Ime[i-1, j-1] - 2*Ime[i,j-1] -1*Ime[i+1, j-1]
-              +1*Ime[i-1, j+1] + 2*Ime[i, j+1] + 1*Ime[i+1, j+1];
+  for j := 1 to Image1.Height - 2 do
+    for i := 1 to Image1.Width - 2 do
+    begin
+      gx := (-1 * Ime[i-1, j-1]) + (1 * Ime[i+1, j-1]) +
+            (-2 * Ime[i-1, j])   + (2 * Ime[i+1, j]) +
+            (-1 * Ime[i-1, j+1]) + (1 * Ime[i+1, j+1]);
 
-        mag[i,j] := round(sqrt(gx*gx+gy*gy));
-      end;
-  min:= 9999999;
-  max := -9999999;
+      gy := (-1 * Ime[i-1, j-1]) + (-2 * Ime[i, j-1]) + (-1 * Ime[i+1, j-1]) +
+            (1 * Ime[i-1, j+1]) + (2 * Ime[i, j+1]) + (1 * Ime[i+1, j+1]);
 
-  for j:=1 to Image1.Height-2 do
-   for i:=1 to Image1.Width-2 do
-       begin
-         if min > mag[i,j] then min := mag[i,j];
-         if max < mag[i,j] then max := mag[i,j];
-       end;
+      mag[i, j] := round(sqrt(gx * gx + gy * gy));
+    end;
 
-   for j:=1 to Image1.Height-2 do
-   for i:=1 to Image1.Width-2 do
-       begin
-           Ims[i,j] := round((mag[i,j] - min) / (max - min) * 255);
-           Image2.Canvas.Pixels[i,j] := RGB(Ims[i,j], Ims[i,j], Ims[i,j]);
-       end;
+
+  min := mag[1, 1];
+  max := mag[1, 1];
+
+
+  for j := 1 to Image1.Height - 2 do
+    for i := 1 to Image1.Width - 2 do
+    begin
+      if min > mag[i, j] then min := mag[i, j];
+      if max < mag[i, j] then max := mag[i, j];
+    end;
+
+
+  if max = min then max := min + 1;
+
+
+  for j := 1 to Image1.Height - 2 do
+    for i := 1 to Image1.Width - 2 do
+    begin
+      Ims[i, j] := round((mag[i, j] - min) / (max - min) * 255);
+      Image2.Canvas.Pixels[i, j] := RGB(Ims[i, j], Ims[i, j], Ims[i, j]);
+    end;
+end;
+
+
+procedure TForm1.MenuItem15Click(Sender: TObject);
+var
+  cor:Integer;
+begin
+   for i:=0 to (Image1.Height-2)do
+     for j:=0 to (Image1.Width-2)do
+     begin
+       cor:= GetRValue(Image1.canvas.Pixels[i,j]);
+       if cor>=128 then
+         Image2.Canvas.Pixels[i,j]:=RGB(255, 255, 255)
+       else
+           Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
+     end;
+end;
+
+procedure TForm1.MenuItem16Click(Sender: TObject);
+var
+  nColunas, nLinhas:Integer;
+  hist, histAcu: array[0 .. 255] of Integer;
+  novoValor: array[0..255] of Byte;
+  cor : TColor;
+  cinza: Byte;
+begin
+  nColunas := Image1.Width;
+  nLinhas := Image1.Height;
+
+
+  for i:=0 to 255 do
+  begin
+    hist[i] := 0;
+    histAcu[i] := 0;
+    novoValor[i]:= 0;
+  end;
+
+  for i:= 0 to nColunas-1 do
+   for j:= 0 to nLinhas-1 do
+   begin
+     cor := Image1.Canvas.Pixels[i,j];
+     cinza:= GetRValue(cor);
+     Inc(hist[cinza]);
+   end;
+
+  for i:=1 to 255 do
+  begin
+    histAcu[i]:= histAcu[i-1] + hist[i];
+  end;
+
+  for i:= 0 to 255 do
+  begin
+    novoValor[i] := max(0, round((255*histAcu[i])/(nColunas*nLinhas))-1);
+  end;
+
+  for i:=0 to nColunas-1 do
+    for j:=0 to nLinhas-1 do
+    begin
+      cinza := GetRValue(Image1.Canvas.pixels[i,j]);
+
+      Image2.Canvas.Pixels[i,j] := RGB(novoValor[cinza],novoValor[cinza],novoValor[cinza]);
+    end;
+
 
 end;
+
 
 (*Passar Imagem da Direita para a Esquerda*)
 procedure TForm1.Button1Click(Sender: TObject);
@@ -284,6 +379,12 @@ begin
   Image1.Picture := Image2.Picture;
 
 end;
+
+procedure TForm1.Edit1Change(Sender: TObject);
+begin
+
+end;
+
 
 (*Sub-Menu 1*)
 procedure TForm1.MenuItem1Click(Sender: TObject);

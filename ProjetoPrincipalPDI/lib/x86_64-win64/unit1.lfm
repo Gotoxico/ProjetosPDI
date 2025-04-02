@@ -22,6 +22,7 @@ object Form1: TForm1
     Top = 10
     Width = 512
     OnClick = Image2Click
+    OnMouseMove = Image2MouseMove
   end
   object Button1: TButton
     Left = 680
@@ -52,6 +53,36 @@ object Form1: TForm1
     Top = 560
     Width = 512
     OnClick = Image1Click
+  end
+  object Edit1: TEdit
+    Left = 1448
+    Height = 28
+    Top = 168
+    Width = 100
+    TabOrder = 1
+    OnChange = Edit1Change
+  end
+  object Label1: TLabel
+    Left = 1359
+    Height = 20
+    Top = 171
+    Width = 72
+    Caption = 'Magnitude'
+    OnClick = Label1Click
+  end
+  object Label2: TLabel
+    Left = 1359
+    Height = 20
+    Top = 216
+    Width = 52
+    Caption = 'Direção'
+  end
+  object Edit2: TEdit
+    Left = 1448
+    Height = 28
+    Top = 216
+    Width = 100
+    TabOrder = 2
   end
   object MainMenu1: TMainMenu
     Left = 1800
@@ -111,6 +142,14 @@ object Form1: TForm1
       object MenuItem14: TMenuItem
         Caption = 'Magnitude de sobel'
         OnClick = MenuItem14Click
+      end
+      object MenuItem15: TMenuItem
+        Caption = 'Binarização'
+        OnClick = MenuItem15Click
+      end
+      object MenuItem16: TMenuItem
+        Caption = 'Equalização da Imagem'
+        OnClick = MenuItem16Click
       end
     end
   end
