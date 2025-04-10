@@ -14,17 +14,10 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
-    Button3: TButton;
     Edit1: TEdit;
     Edit10: TEdit;
     Edit11: TEdit;
     Edit12: TEdit;
-    Edit13: TEdit;
-    Edit14: TEdit;
-    Edit15: TEdit;
-    Edit16: TEdit;
-    Edit17: TEdit;
-    Edit18: TEdit;
     Edit2: TEdit;
     Edit3: TEdit;
     Edit4: TEdit;
@@ -35,19 +28,15 @@ type
     Edit9: TEdit;
     Label1: TLabel;
     Label2: TLabel;
-    Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    Label6: TLabel;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
-    procedure HSLtoRGB(H, S, L: Integer; var R, G, B: Integer);
+    procedure HSVtoRGB(H, S, V: Integer; var R, G, B: Integer);
     procedure Label4Click(Sender: TObject);
-    procedure RGBtoHSL(R, G, B: Integer; var H, S, L: Integer);
-    procedure HSVtoHSL(HV, SV, V: Integer; var HL, SL, L: Integer);
+    procedure RGBtoHSV(R, G, B: Integer; var H, S, V: Integer);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
     procedure Edit10Change(Sender: TObject);
     procedure Edit11Change(Sender: TObject);
     procedure Edit12Change(Sender: TObject);
@@ -85,15 +74,15 @@ implementation
 { TForm1 }
 
 (*Função utilizada em TForm1.Button1Click*)
-procedure TForm1.HSLtoRGB(H, S, L: Integer; var R, G, B: Integer);
+procedure TForm1.HSVtoRGB(H, S, V: Integer; var R, G, B: Integer);
 var
-  C, X, HLinha, M, R1, G1, B1, H1, S1, L1 : Double;
+  C, X, HLinha, M, R1, G1, B1, H1, S1, V1 : Double;
 begin
   H1 := H mod 360;
   S1 := S / 100.0;
-  L1 := L / 100.0;
+  V1 := V / 100.0;
 
-  C := (1 - Abs(2 * L1 - 1)) * S1;
+  C := V1 * S1;
 
   HLinha := H1 / 60.0;
 
@@ -141,7 +130,7 @@ begin
       B1 := X;
     end;
 
-  M := L1 - C / 2;
+  M := V1 - C;
 
   R := Round((R1 + M) * 255);
   G := Round((G1 + M) * 255);
@@ -154,9 +143,9 @@ begin
 end;
 
 (*Função utilizada em TForm1.Button2Click*)
-procedure TForm1.RGBtoHSL(R, G, B: Integer; var H, S, L: Integer);
+procedure TForm1.RGBtoHSV(R, G, B: Integer; var H, S, V: Integer);
 var
-  R1, G1, B1, XMax, XMin, C, H1, L1, S1 : Double;
+  R1, G1, B1, XMax, XMin, C, H1, V1, S1 : Double;
 begin
   R1 := R / 255.0;
   G1 := G / 255.0;
@@ -164,6 +153,8 @@ begin
 
   XMax := Max(R1, Max(G1, B1));
   XMin := Min(R1, Min(G1, B1));
+
+  V1 := Xmax;
 
   C := XMax - XMin;
 
@@ -187,42 +178,18 @@ begin
       H1 := 60.0 * ((R1 - G1) / C + 4);
     end;
 
-  L1 := (XMax + XMin) / 2;
-
-  if (L1 = 0) or (L1 = 1) then
+  if (XMax = 0) then
     begin
-      S1 := 0;
+       S1 := 0;
     end
   else
-      begin
-         S1 := (XMax - L1) / Min(L1, 1 - L1);
-      end;
+    begin
+       S1 := (C / XMax);
+    end;
 
   H := Round(H1);
   S := Round(S1 * 100);
-  L := Round(L1 * 100);
-end;
-
-procedure TForm1.HSVtoHSL(HV, SV, V: Integer; var HL, SL, L: Integer);
-var SV1, V1, SL1, L1: Double;
-begin
-  SV1 := SV / 100.0;
-  V1 := V / 100.0;
-
-  L1 := V1 * (1 - SV1 / 2);
-
-  if (L1 = 0) or (L1 = 1) then
-    begin
-      SL1 := 0;
-    end
-  else
-      begin
-         SL1 := (V1 - L1) / Min(L1, 1 - L1);
-      end;
-
-  HL := HV;
-  SL := Round(SL1 * 100);
-  L := Round(L1 * 100);
+  V := Round(V1 * 100);
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
@@ -241,7 +208,7 @@ begin
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
-var H, S, L, R, G, B : Integer;
+var H, S, V, R, G, B : Integer;
 
 begin
   R := 0;
@@ -249,7 +216,7 @@ begin
   B := 0;
   H := StrToInt(Edit1.Text);
   S := StrToInt(Edit2.Text);
-  L := StrToInt(Edit3.Text);
+  V := StrToInt(Edit3.Text);
 
   if (H < 0) or (H > 360) then
      begin
@@ -261,24 +228,24 @@ begin
        ShowMessage('Saturação deve estar entre 0 e 100');
        Exit;
      end;
-  if (L < 0) or (L > 100) then
+  if (V < 0) or (V > 100) then
      begin
        ShowMessage('Lightness deve estar entre 0 e 100');
        Exit;
      end;
 
-  HSLtoRGB(H, S, L, R, G, B);
+  HSVtoRGB(H, S, V, R, G, B);
   Edit4.Text := IntToStr(R);
   Edit5.Text := IntToStr(G);
   Edit6.Text := IntToStr(B);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
-var R, G, B, H, S, L : Integer;
+var R, G, B, H, S, V : Integer;
 begin
   H := 0;
   S := 0;
-  L := 0;
+  V := 0;
   R := StrToInt(Edit7.Text);
   G := StrToInt(Edit8.Text);
   B := StrToInt(Edit9.Text);
@@ -296,43 +263,10 @@ begin
        ShowMessage('Blue deve estar entre 0 e 255');
      end;
 
-  RGBtoHSL(R, G, B, H, S, L);
+  RGBtoHSV(R, G, B, H, S, V);
   Edit10.Text := IntToStr(H);
   Edit11.Text := IntToStr(S);
-  Edit12.Text := IntToStr(L);
-
-end;
-
-procedure TForm1.Button3Click(Sender: TObject);
-var HV, SV, V, HL, SL, L : Integer;
-begin
-  HL := 0;
-  SL := 0;
-  L := 0;
-  HV := StrToInt(Edit13.Text);
-  SV := StrToInt(Edit14.Text);
-  V := StrToInt(Edit15.Text);
-
-  if (HV < 0) or (HV > 360) then
-     begin
-       ShowMessage('Hue deve estar entre 0 e 360');
-       Exit;
-     end;
-  if (SV < 0) or (SV > 100) then
-     begin
-       ShowMessage('Saturação deve estar entre 0 e 100');
-       Exit;
-     end;
-  if (V < 0) or (V > 100) then
-     begin
-       ShowMessage('Value deve estar entre 0 e 100');
-       Exit;
-     end;
-
-  HSVtoHSL(HV, SV, V, HL, SL, L);
-  Edit16.Text := IntToStr(HL);
-  Edit17.Text := IntToStr(SL);
-  Edit18.Text := IntToStr(L);
+  Edit12.Text := IntToStr(V);
 
 end;
 
