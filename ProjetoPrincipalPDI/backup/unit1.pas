@@ -16,6 +16,7 @@ type
     Button1: TButton;
     Edit1: TEdit;
     Edit2: TEdit;
+    Edit3: TEdit;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
@@ -23,6 +24,7 @@ type
     Image5: TImage;
     Label1: TLabel;
     Label2: TLabel;
+    Label3: TLabel;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
@@ -32,6 +34,9 @@ type
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
+    MenuItem17: TMenuItem;
+    MenuItem18: TMenuItem;
+    MenuItem19: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -44,11 +49,15 @@ type
     SaveDialog1: TSaveDialog;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Edit3Change(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
+    procedure Image2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
+      );
     procedure Label1Click(Sender: TObject);
+    procedure Label3Click(Sender: TObject);
     procedure MenuItem10Click(Sender: TObject);
     procedure MenuItem11Click(Sender: TObject);
     procedure MenuItem12Click(Sender: TObject);
@@ -56,6 +65,9 @@ type
     procedure MenuItem14Click(Sender: TObject);
     procedure MenuItem15Click(Sender: TObject);
     procedure MenuItem16Click(Sender: TObject);
+    procedure MenuItem17Click(Sender: TObject);
+    procedure MenuItem18Click(Sender: TObject);
+    procedure MenuItem19Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
@@ -100,7 +112,18 @@ begin
 
 end;
 
+procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  Edit1.Text:= IntToStr(Mag[x,y]);
+end;
+
 procedure TForm1.Label1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Label3Click(Sender: TObject);
 begin
 
 end;
@@ -338,7 +361,7 @@ begin
      cinza:= GetRValue(cor);
      Inc(hist[cinza]);
    end;
-
+  histAcu[0] := hist[0];
   for i:=1 to 255 do
   begin
     histAcu[i]:= histAcu[i-1] + hist[i];
@@ -361,6 +384,46 @@ begin
 end;
 
 
+
+procedure TForm1.MenuItem18Click(Sender: TObject);
+var
+  soma, cor1, normal, cor2: Integer;
+
+begin
+  for i:= 0 to Image1.Height-1 do
+   for j:= 0  to Image1.Width-1 do
+   begin
+
+     cor1 := GetRValue(Image1.Canvas.Pixels[i,j]);
+     cor2 := GetRValue(Image2.Canvas.Pixels[i,j]);
+
+     soma := cor1 + cor2;
+     normal := round((soma-255)/255*255);
+     Image3.Canvas.Pixels[i,j]:=RGB(normal,normal,normal);
+   end;
+
+end;
+
+procedure TForm1.MenuItem19Click(Sender: TObject);
+var
+  limiar, tom: Integer;
+begin
+  limiar:=StrToInt(Edit3.Text);
+
+   for i:=0 to (Image1.Height-2)do
+     for j:=0 to (Image1.Width-2)do
+     begin
+       cor:= GetRValue(Image1.canvas.Pixels[i,j]);
+       if cor>=limiar then
+         Image2.Canvas.Pixels[i,j]:= Image1.Canvas.pixels[i,j];
+       else
+           Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
+
+     end;
+
+end;
+
+
 (*Passar Imagem da Direita para a Esquerda*)
 procedure TForm1.Button1Click(Sender: TObject);
 begin
@@ -373,6 +436,11 @@ begin
 end;
 
 procedure TForm1.Edit1Change(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Edit3Change(Sender: TObject);
 begin
 
 end;
@@ -450,6 +518,26 @@ begin
             b := GetBValue(cor);
             Image2.Canvas.Pixels[i, j] := RGB(255 - r,255 - g,255 - b);
           end;
+end;
+ procedure TForm1.MenuItem17Click(Sender: TObject);
+var
+  laplace, cor, k, l, i, j, soma: integer;
+begin
+  laplace := 0;
+  soma := 0;
+
+  for i := 1 to Image1.Height - 2 do
+    for j := 1 to Image1.Width - 2 do
+    begin
+      Image2.Canvas.Pixels[j, i] :=
+              -1 * (Image1.Canvas.Pixels[j - 1, i] +
+                    Image1.Canvas.Pixels[j + 1, i] +
+                    Image1.Canvas.Pixels[j, i - 1] +
+                    Image1.Canvas.Pixels[j, i + 1]) +
+               4 * (Image1.Canvas.Pixels[j, i]);
+
+
+    end;
 end;
 
 (*Separar Canais RGB em Três Imagens*)
