@@ -49,6 +49,7 @@ type
     SaveDialog1: TSaveDialog;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Edit2Change(Sender: TObject);
     procedure Edit3Change(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
@@ -86,7 +87,7 @@ type
 var
   Form1: TForm1;
   r, g, b, c, i, j, tamanho, quantidadeRuido, x, y, soma, media, u, d, e, mediana, temp: integer;
-  ime, ims, mag: array[0..511, 0..511] of integer;
+  ime, ims, mag, dir: array[0..511, 0..511] of integer;
   cor: TColor;
   mascara : array[0..2, 0..2] of integer;
   vetorTonsMediana : array[0..8] of integer;
@@ -116,6 +117,7 @@ procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
   Edit1.Text:= IntToStr(Mag[x,y]);
+  Edit2.Text:= IntToStr(dir[x,y]);
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
@@ -278,7 +280,7 @@ begin
 end;
 procedure TForm1.MenuItem14Click(Sender: TObject);
 var
-  gx, gy, min, max: Integer;
+  gx, gy, min, max,theta: Integer;
   i, j: Integer;
 begin
 
@@ -293,6 +295,22 @@ begin
             (1 * Ime[i-1, j+1]) + (2 * Ime[i, j+1]) + (1 * Ime[i+1, j+1]);
 
       mag[i, j] := round(sqrt(gx * gx + gy * gy));
+      if gx = 0 then
+      begin
+        if gy > 0 then
+          theta := 90
+        else if gy < 0 then
+          theta := -90
+        else
+          theta := 0; // gx = 0 e gy = 0 → sem borda, direção indefinida
+      end
+      else
+      begin
+        theta := round(arctan(gy / gx) * 180 / pi);
+      end;
+      dir[x,y] := theta;
+
+
     end;
 
 
@@ -415,7 +433,7 @@ begin
      begin
        cor:= GetRValue(Image1.canvas.Pixels[i,j]);
        if cor>=limiar then
-         Image2.Canvas.Pixels[i,j]:= Image1.Canvas.pixels[i,j];
+         Image2.Canvas.Pixels[i,j]:= Image1.Canvas.pixels[i,j]
        else
            Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
 
@@ -436,6 +454,11 @@ begin
 end;
 
 procedure TForm1.Edit1Change(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Edit2Change(Sender: TObject);
 begin
 
 end;
