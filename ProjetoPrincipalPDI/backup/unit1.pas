@@ -268,6 +268,8 @@ begin
      for i := 1 to 10 do
         im[i].Free;
 end;
+
+
 procedure TForm1.MenuItem14Click(Sender: TObject);
 var
   gx, gy, min, max: Integer;
