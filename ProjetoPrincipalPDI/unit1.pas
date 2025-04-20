@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
-  StdCtrls, Windows, LCLIntf, LCLType, LCLProc;
+  StdCtrls, Windows, LCLIntf, LCLType, LCLProc, Math;
 
 type
 
@@ -17,6 +17,7 @@ type
     Edit1: TEdit;
     Edit2: TEdit;
     Edit3: TEdit;
+    Edit4: TEdit;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
@@ -25,6 +26,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
@@ -37,6 +39,7 @@ type
     MenuItem17: TMenuItem;
     MenuItem18: TMenuItem;
     MenuItem19: TMenuItem;
+    MenuItem20: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -69,6 +72,7 @@ type
     procedure MenuItem17Click(Sender: TObject);
     procedure MenuItem18Click(Sender: TObject);
     procedure MenuItem19Click(Sender: TObject);
+    procedure MenuItem20Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
@@ -147,12 +151,12 @@ begin
              for x := -1 to 1 do
                  for y := -1 to 1 do
                  begin
-                     cor := Image1.Canvas.Pixels[i + x, j + y];
-                     soma := soma + (GetRValue(cor) * mascara[x + 1, y + 1]);
+                     soma := soma + (ime[i + x, j + y] * mascara[x + 1, y + 1]);
                  end;
 
              media := Round(soma/9);
 
+             ims[i,j] := media;
              Image2.Canvas.Pixels[i, j] := RGB(media, media, media);
          end;
 end;
@@ -180,8 +184,7 @@ begin
              for x := -1 to 1 do
                  for y := -1 to 1 do
                  begin
-                     cor := Image1.Canvas.Pixels[i + x, j + y];
-                     vetorTonsMediana[u] := GetRValue(cor) * mascara[x + 1, y + 1];
+                     vetorTonsMediana[u] := ime[i + x, j + y] * mascara[x + 1, y + 1];
                      Inc(u);
                  end;
 
@@ -197,6 +200,7 @@ begin
                 end;
              mediana := vetorTonsMediana[4];
 
+             ims[i,j] := mediana;
              Image2.Canvas.Pixels[i, j] := RGB(mediana, mediana, mediana);
          end;
 
@@ -278,6 +282,8 @@ begin
      for i := 1 to 10 do
         im[i].Free;
 end;
+
+
 procedure TForm1.MenuItem14Click(Sender: TObject);
 var
   gx, gy, min, max,theta: Integer;
@@ -399,6 +405,27 @@ begin
     end;
 
 
+end;
+
+(*Compressão*)
+procedure TForm1.MenuItem17Click(Sender: TObject);
+var C, Y, RNormalizado, Intermediario: Double;
+var i, j, R, S: Integer;
+begin
+  C := StrToFloat(Edit3.Text);
+  Y := StrToFloat(Edit4.Text);
+
+  for i := 0 to Image1.Width - 1 do
+      for j := 0 to Image1.Height - 1 do
+      begin
+           R := GetRValue(Image1.Canvas.pixels[i,j]);
+           RNormalizado := R / 255;
+           Intermediario := C * power(RNormalizado, Y);
+           S := Round(Intermediario * 255);
+           if S > 255 then S := 255;
+           if S < 0 then S := 0;
+           Image2.Canvas.pixels[i,j] := RGB(S, S, S);
+      end;
 end;
 
 
