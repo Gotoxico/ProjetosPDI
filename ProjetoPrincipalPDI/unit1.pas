@@ -37,6 +37,9 @@ type
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
     MenuItem17: TMenuItem;
+    MenuItem18: TMenuItem;
+    MenuItem19: TMenuItem;
+    MenuItem20: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -65,6 +68,9 @@ type
     procedure MenuItem15Click(Sender: TObject);
     procedure MenuItem16Click(Sender: TObject);
     procedure MenuItem17Click(Sender: TObject);
+    procedure MenuItem18Click(Sender: TObject);
+    procedure MenuItem19Click(Sender: TObject);
+    procedure MenuItem20Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
@@ -83,7 +89,7 @@ type
 var
   Form1: TForm1;
   r, g, b, c, i, j, tamanho, quantidadeRuido, x, y, soma, media, u, d, e, mediana, temp: integer;
-  ime, ims, mag: array[0..511, 0..511] of integer;
+  ime, ims, mag, dir: array[0..511, 0..511] of integer;
   cor: TColor;
   mascara : array[0..2, 0..2] of integer;
   vetorTonsMediana : array[0..8] of integer;
@@ -113,6 +119,7 @@ procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
   Edit1.Text:= IntToStr(Mag[x,y]);
+  Edit2.Text:= IntToStr(dir[x,y]);
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
@@ -272,7 +279,7 @@ end;
 
 procedure TForm1.MenuItem14Click(Sender: TObject);
 var
-  gx, gy, min, max: Integer;
+  gx, gy, min, max,theta: Integer;
   i, j: Integer;
 begin
 
@@ -287,6 +294,22 @@ begin
             (1 * Ime[i-1, j+1]) + (2 * Ime[i, j+1]) + (1 * Ime[i+1, j+1]);
 
       mag[i, j] := round(sqrt(gx * gx + gy * gy));
+      if gx = 0 then
+      begin
+        if gy > 0 then
+          theta := 90
+        else if gy < 0 then
+          theta := -90
+        else
+          theta := 0; // gx = 0 e gy = 0 → sem borda, direção indefinida
+      end
+      else
+      begin
+        theta := round(arctan(gy / gx) * 180 / pi);
+      end;
+      dir[i,j] := theta;
+
+
     end;
 
 
@@ -396,6 +419,65 @@ begin
            if S < 0 then S := 0;
            Image2.Canvas.pixels[i,j] := RGB(S, S, S);
       end;
+end;
+
+procedure TForm1.MenuItem18Click(Sender: TObject);
+var
+  soma, cor1, normal, cor2: Integer;
+
+begin
+  for i:= 0 to Image1.Height-1 do
+   for j:= 0  to Image1.Width-1 do
+   begin
+
+     cor1 := GetRValue(Image1.Canvas.Pixels[i,j]);
+     cor2 := GetRValue(Image2.Canvas.Pixels[i,j]);
+
+     soma := cor1 + cor2;
+     normal := round((soma-255)/255*255);
+     Image3.Canvas.Pixels[i,j]:=RGB(normal,normal,normal);
+   end;
+
+end;
+
+procedure TForm1.MenuItem19Click(Sender: TObject);
+var
+  limiar, tom: Integer;
+begin
+  limiar:=StrToInt(Edit3.Text);
+
+   for i:=0 to (Image1.Height-2)do
+     for j:=0 to (Image1.Width-2)do
+     begin
+       cor:= GetRValue(Image1.canvas.Pixels[i,j]);
+       if cor>=limiar then
+         Image2.Canvas.Pixels[i,j]:= Image1.Canvas.pixels[i,j]
+       else
+           Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
+
+     end;
+
+end;
+
+procedure TForm1.MenuItem20Click(Sender: TObject);
+var
+  laplace, cor, k, l, i, j, soma: integer;
+begin
+  laplace := 0;
+  soma := 0;
+
+  for i := 1 to Image1.Height - 2 do
+    for j := 1 to Image1.Width - 2 do
+    begin
+      Image2.Canvas.Pixels[j, i] :=
+              -1 * (Image1.Canvas.Pixels[j - 1, i] +
+                    Image1.Canvas.Pixels[j + 1, i] +
+                    Image1.Canvas.Pixels[j, i - 1] +
+                    Image1.Canvas.Pixels[j, i + 1]) +
+               4 * (Image1.Canvas.Pixels[j, i]);
+
+
+    end;
 end;
 
 
