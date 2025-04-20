@@ -18,6 +18,7 @@ type
     Edit2: TEdit;
     Edit3: TEdit;
     Edit4: TEdit;
+    Edit5: TEdit;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
@@ -27,6 +28,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    Limiar: TLabel;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem10: TMenuItem;
@@ -53,6 +55,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure Edit3Change(Sender: TObject);
+    procedure Edit5Change(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure Image1Click(Sender: TObject);
@@ -60,6 +63,7 @@ type
     procedure Image2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
       );
     procedure Label1Click(Sender: TObject);
+    procedure LimiarClick(Sender: TObject);
     procedure MenuItem10Click(Sender: TObject);
     procedure MenuItem11Click(Sender: TObject);
     procedure MenuItem12Click(Sender: TObject);
@@ -123,6 +127,11 @@ begin
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.LimiarClick(Sender: TObject);
 begin
 
 end;
@@ -423,44 +432,6 @@ end;
 
 procedure TForm1.MenuItem18Click(Sender: TObject);
 var
-  soma, cor1, normal, cor2: Integer;
-
-begin
-  for i:= 0 to Image1.Height-1 do
-   for j:= 0  to Image1.Width-1 do
-   begin
-
-     cor1 := GetRValue(Image1.Canvas.Pixels[i,j]);
-     cor2 := GetRValue(Image2.Canvas.Pixels[i,j]);
-
-     soma := cor1 + cor2;
-     normal := round((soma-255)/255*255);
-     Image3.Canvas.Pixels[i,j]:=RGB(normal,normal,normal);
-   end;
-
-end;
-
-procedure TForm1.MenuItem19Click(Sender: TObject);
-var
-  limiar, tom: Integer;
-begin
-  limiar:=StrToInt(Edit3.Text);
-
-   for i:=0 to (Image1.Height-2)do
-     for j:=0 to (Image1.Width-2)do
-     begin
-       cor:= GetRValue(Image1.canvas.Pixels[i,j]);
-       if cor>=limiar then
-         Image2.Canvas.Pixels[i,j]:= Image1.Canvas.pixels[i,j]
-       else
-           Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
-
-     end;
-
-end;
-
-procedure TForm1.MenuItem20Click(Sender: TObject);
-var
   laplace, cor, k, l, i, j, soma: integer;
 begin
   laplace := 0;
@@ -478,6 +449,47 @@ begin
 
 
     end;
+
+end;
+
+procedure TForm1.MenuItem19Click(Sender: TObject);
+var
+  lim, cor: Integer ;
+  i, j: Integer;
+begin
+  lim := StrToInt(Edit5.Text);
+
+  for i := 0 to (Image1.Height - 2) do
+    for j := 0 to (Image1.Width - 2) do
+    begin
+      cor := GetRValue(Image1.Canvas.Pixels[j, i]);
+      if cor >= lim then
+        Image2.Canvas.Pixels[j, i] := Image1.Canvas.Pixels[j, i]
+      else
+        Image2.Canvas.Pixels[j, i] := RGB(0, 0, 0);
+    end;
+end;
+
+
+
+
+procedure TForm1.MenuItem20Click(Sender: TObject);
+var
+  soma, cor1, normal, cor2: Integer;
+
+begin
+  for i:= 0 to Image1.Height-1 do
+   for j:= 0  to Image1.Width-1 do
+   begin
+
+     cor1 := GetRValue(Image1.Canvas.Pixels[i,j]);
+     cor2 := GetRValue(Image2.Canvas.Pixels[i,j]);
+
+     soma := cor1 + cor2;
+     normal := round((soma-255)/255*255);
+     Image3.Canvas.Pixels[i,j]:=RGB(normal,normal,normal);
+   end;
+
 end;
 
 
@@ -498,6 +510,11 @@ begin
 end;
 
 procedure TForm1.Edit3Change(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Edit5Change(Sender: TObject);
 begin
 
 end;
