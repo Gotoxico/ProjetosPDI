@@ -552,22 +552,34 @@ procedure TForm1.MenuItem5Click(Sender: TObject);
 begin
 
 end;
-
-(*Converter para Cinza*)
 procedure TForm1.MenuItem6Click(Sender: TObject);
+var
+  i, j: Integer;
+  cor, r, g, b, c: Integer;
 begin
-  for i:=0 to Image1.Width - 1 do
-      for j:= 0 to Image1.Height - 1 do
-          begin
-            cor := Image1.Canvas.Pixels[i, j];
-            r := GetRValue(cor);
-            g := GetGValue(cor);
-            b := GetBValue(cor);
-            c := round(0.299 * r + 0.587 * g + 0.114 * b);
-            ims[i, j] := c;
-            Image2.Canvas.Pixels[i, j] := RGB(c,c,c);
-          end;
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+      ime[i, j] := Image1.Canvas.Pixels[i, j];
+
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+    begin
+      cor := ime[i, j];
+      r := GetRValue(cor);
+      g := GetGValue(cor);
+      b := GetBValue(cor);
+      c := Round(0.299 * r + 0.587 * g + 0.114 * b);
+      ims[i, j] := c;
+    end;
+
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+      Image2.Canvas.Pixels[i, j] := RGB(ims[i, j], ims[i, j], ims[i, j]);
 end;
+
 
 (*Negativa Cinza*)
 procedure TForm1.MenuItem7Click(Sender: TObject);
