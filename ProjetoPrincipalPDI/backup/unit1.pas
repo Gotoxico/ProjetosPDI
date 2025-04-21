@@ -552,6 +552,8 @@ procedure TForm1.MenuItem5Click(Sender: TObject);
 begin
 
 end;
+
+(*Converter para Cinza*)
 procedure TForm1.MenuItem6Click(Sender: TObject);
 var
   i, j: Integer;

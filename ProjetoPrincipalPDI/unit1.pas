@@ -118,7 +118,7 @@ procedure TForm1.Image2Click(Sender: TObject);
 begin
 
 end;
-
+{*Evento ao mover o mouse por cima da imagem 2*}
 procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
@@ -284,8 +284,7 @@ begin
      for i := 1 to 10 do
         im[i].Free;
 end;
-
-
+{*Magnitude de sobel*}
 procedure TForm1.MenuItem14Click(Sender: TObject);
 var
   gx, gy, min, max,theta: Integer;
@@ -344,8 +343,7 @@ begin
       Image2.Canvas.Pixels[i, j] := RGB(Ims[i, j], Ims[i, j], Ims[i, j]);
     end;
 end;
-
-
+{*Binarização da imagem*}
 procedure TForm1.MenuItem15Click(Sender: TObject);
 var
   cor:Integer;
@@ -360,7 +358,7 @@ begin
            Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
      end;
 end;
-
+{*Equalização da Imagem*}
 procedure TForm1.MenuItem16Click(Sender: TObject);
 var
   nColunas, nLinhas:Integer;
@@ -429,10 +427,10 @@ begin
            Image2.Canvas.pixels[i,j] := RGB(S, S, S);
       end;
 end;
-
+{*Laplaciano vizinhança 4*}
 procedure TForm1.MenuItem18Click(Sender: TObject);
 var
-  laplace, cor, k, l, i, j, soma: integer;
+   i, j: integer;
 begin
   laplace := 0;
   soma := 0;
@@ -451,7 +449,7 @@ begin
     end;
 
 end;
-
+{*limiarização*}
 procedure TForm1.MenuItem19Click(Sender: TObject);
 var
   lim, cor: Integer ;
@@ -469,10 +467,7 @@ begin
         Image2.Canvas.Pixels[j, i] := RGB(0, 0, 0);
     end;
 end;
-
-
-
-
+ {*Somar duas imagens*}
 procedure TForm1.MenuItem20Click(Sender: TObject);
 var
   soma, cor1, normal, cor2: Integer;
