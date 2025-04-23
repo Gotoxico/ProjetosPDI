@@ -118,7 +118,7 @@ procedure TForm1.Image2Click(Sender: TObject);
 begin
 
 end;
-
+{*Evento ao mover o mouse por cima da imagem 2*}
 procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 begin
@@ -138,30 +138,33 @@ end;
 
 (*Filtro Convolucional Média Vizinhança 8*)
 procedure TForm1.MenuItem10Click(Sender: TObject);
+var
+  i, j, x, y: Integer;
+  soma, media: Integer;
 begin
-     for i:= 0 to 2 do
-         for j := 0 to 2 do
-             begin
-                  mascara[i, j] := 1;
-             end;
+  // Percorre a imagem ignorando as bordas
+  for i := 1 to Image1.Width - 2 do
+    for j := 1 to Image1.Height - 2 do
+    begin
+      soma := 0;
 
-     for i := 1 to Image1.Width - 2 do
-         for j := 1 to Image1.Height - 2 do
-         begin
-             soma := 0;
 
-             for x := -1 to 1 do
-                 for y := -1 to 1 do
-                 begin
-                     soma := soma + (ime[i + x, j + y] * mascara[x + 1, y + 1]);
-                 end;
+      for x := -1 to 1 do
+        for y := -1 to 1 do
+        begin
+          if not ((x = 0) and (y = 0)) then // Ignora o centro
+            soma := soma + ime[i + x, j + y];
+        end;
 
-             media := Round(soma/9);
+      // Calcula a média dos 8 vizinhos
+      media := Round(soma / 8);
 
-             ims[i,j] := media;
-             Image2.Canvas.Pixels[i, j] := RGB(media, media, media);
-         end;
+
+      ims[i, j] := media;
+      Image2.Canvas.Pixels[i, j] := RGB(media, media, media);
+    end;
 end;
+
 
 (*Filtro Convolucional Mediana Vizinhança 8*)
 procedure TForm1.MenuItem11Click(Sender: TObject);
@@ -284,8 +287,7 @@ begin
      for i := 1 to 10 do
         im[i].Free;
 end;
-
-
+{*Magnitude de sobel*}
 procedure TForm1.MenuItem14Click(Sender: TObject);
 var
   gx, gy, min, max,theta: Integer;
@@ -339,13 +341,13 @@ begin
 
   for j := 1 to Image1.Height - 2 do
     for i := 1 to Image1.Width - 2 do
+
     begin
       Ims[i, j] := round((mag[i, j] - min) / (max - min) * 255);
       Image2.Canvas.Pixels[i, j] := RGB(Ims[i, j], Ims[i, j], Ims[i, j]);
     end;
 end;
-
-
+{*Binarização da imagem*}
 procedure TForm1.MenuItem15Click(Sender: TObject);
 var
   cor:Integer;
@@ -360,7 +362,7 @@ begin
            Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
      end;
 end;
-
+{*Equalização da Imagem*}
 procedure TForm1.MenuItem16Click(Sender: TObject);
 var
   nColunas, nLinhas:Integer;
@@ -429,29 +431,54 @@ begin
            Image2.Canvas.pixels[i,j] := RGB(S, S, S);
       end;
 end;
-
 procedure TForm1.MenuItem18Click(Sender: TObject);
 var
-  laplace, cor, k, l, i, j, soma: integer;
+  i, j, corEq, min, max: integer;
+  cor: array[0..511, 0..511] of integer;
 begin
-  laplace := 0;
-  soma := 0;
+  // Inicializa a matriz
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+      cor[i, j] := 0;
+
+  // Inicia min e max
+  min := 2147483647;
+  max := -2147483648;
+
 
   for i := 1 to Image1.Height - 2 do
     for j := 1 to Image1.Width - 2 do
     begin
-      Image2.Canvas.Pixels[j, i] :=
-              -1 * (Image1.Canvas.Pixels[j - 1, i] +
-                    Image1.Canvas.Pixels[j + 1, i] +
-                    Image1.Canvas.Pixels[j, i - 1] +
-                    Image1.Canvas.Pixels[j, i + 1]) +
-               4 * (Image1.Canvas.Pixels[j, i]);
+      cor[i, j] :=
+        -1 * (Image1.Canvas.Pixels[j - 1, i] +
+              Image1.Canvas.Pixels[j + 1, i] +
+              Image1.Canvas.Pixels[j, i - 1] +
+              Image1.Canvas.Pixels[j, i + 1]) +
+         4 * Image1.Canvas.Pixels[j, i];
 
 
+      if cor[i, j] < min then min := cor[i, j];
+      if cor[i, j] > max then max := cor[i, j];
     end;
 
+
+  if max = min then max := min + 1;
+
+
+  for i := 1 to Image1.Height - 2 do
+    for j := 1 to Image1.Width - 2 do
+    begin
+      corEq := Round(((cor[i, j] - min) / (max - min)) * 255);
+
+
+      if corEq < 0 then corEq := 0;
+      if corEq > 255 then corEq := 255;
+
+      Image2.Canvas.Pixels[j, i] := RGB(corEq, corEq, corEq);
+    end;
 end;
 
+{*limiarização*}
 procedure TForm1.MenuItem19Click(Sender: TObject);
 var
   lim, cor: Integer ;
@@ -469,10 +496,7 @@ begin
         Image2.Canvas.Pixels[j, i] := RGB(0, 0, 0);
     end;
 end;
-
-
-
-
+ {*Somar duas imagens*}
 procedure TForm1.MenuItem20Click(Sender: TObject);
 var
   soma, cor1, normal, cor2: Integer;
