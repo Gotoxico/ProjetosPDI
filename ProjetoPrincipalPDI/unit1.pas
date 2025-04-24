@@ -54,7 +54,9 @@ type
     SaveDialog1: TSaveDialog;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Edit2Change(Sender: TObject);
     procedure Edit3Change(Sender: TObject);
+    procedure Edit4Change(Sender: TObject);
     procedure Edit5Change(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
@@ -138,32 +140,31 @@ end;
 
 (*Filtro Convolucional Média Vizinhança 8*)
 procedure TForm1.MenuItem10Click(Sender: TObject);
-var
-  i, j, x, y: Integer;
-  soma, media: Integer;
 begin
-  // Percorre a imagem ignorando as bordas
-  for i := 1 to Image1.Width - 2 do
-    for j := 1 to Image1.Height - 2 do
-    begin
-      soma := 0;
+     for i:= 0 to 2 do
+         for j := 0 to 2 do
+             begin
+                  mascara[i, j] := 1;
+             end;
 
+     for i := 1 to Image1.Width - 2 do
+         for j := 1 to Image1.Height - 2 do
+         begin
+             soma := 0;
 
-      for x := -1 to 1 do
-        for y := -1 to 1 do
-        begin
-          if not ((x = 0) and (y = 0)) then // Ignora o centro
-            soma := soma + ime[i + x, j + y];
-        end;
+             for x := -1 to 1 do
+                 for y := -1 to 1 do
+                 begin
+                     soma := soma + (ime[i + x, j + y] * mascara[x + 1, y + 1]);
+                 end;
 
-      // Calcula a média dos 8 vizinhos
-      media := Round(soma / 8);
+             media := Round(soma/9);
 
-
-      ims[i, j] := media;
-      Image2.Canvas.Pixels[i, j] := RGB(media, media, media);
-    end;
+             ims[i,j] := media;
+             Image2.Canvas.Pixels[i, j] := RGB(media, media, media);
+         end;
 end;
+
 
 
 (*Filtro Convolucional Mediana Vizinhança 8*)
@@ -350,13 +351,15 @@ end;
 {*Binarização da imagem*}
 procedure TForm1.MenuItem15Click(Sender: TObject);
 var
+  lim : LongInt;
   cor:Integer;
 begin
+   lim := StrToInt(Edit5.Text);
    for i:=0 to (Image1.Height-2)do
      for j:=0 to (Image1.Width-2)do
      begin
        cor:= GetRValue(Image1.canvas.Pixels[i,j]);
-       if cor>=128 then
+       if cor>=lim then
          Image2.Canvas.Pixels[i,j]:=RGB(255, 255, 255)
        else
            Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
@@ -431,17 +434,17 @@ begin
            Image2.Canvas.pixels[i,j] := RGB(S, S, S);
       end;
 end;
+{*Laplaciano Vizinhança 4*}
 procedure TForm1.MenuItem18Click(Sender: TObject);
 var
   i, j, corEq, min, max: integer;
   cor: array[0..511, 0..511] of integer;
 begin
-  // Inicializa a matriz
+
   for i := 0 to 511 do
     for j := 0 to 511 do
       cor[i, j] := 0;
 
-  // Inicia min e max
   min := 2147483647;
   max := -2147483648;
 
@@ -527,17 +530,28 @@ begin
   Image1.Picture := Image2.Picture;
 
 end;
-
+{*Magnitude*}
 procedure TForm1.Edit1Change(Sender: TObject);
 begin
 
 end;
+{*Direção*}
+procedure TForm1.Edit2Change(Sender: TObject);
+begin
 
+end;
+{*C para Compressão*}
 procedure TForm1.Edit3Change(Sender: TObject);
 begin
 
 end;
+{*Y para Compressão*}
+procedure TForm1.Edit4Change(Sender: TObject);
+begin
 
+end;
+
+{*Limiar*}
 procedure TForm1.Edit5Change(Sender: TObject);
 begin
 
@@ -550,13 +564,18 @@ begin
 
 end;
 
-(*Abri Imagem*)
+(*Abrir Imagem*)
 procedure TForm1.MenuItem2Click(Sender: TObject);
 begin
   if (OpenDialog1.Execute)
      then Image1.Picture.LoadFromFile(OpenDialog1.FileName);
+     for i:= 0 to Image1.Height do
+       for j:= 0 to Image1.Width do
+         begin
+              ime[i,j] := GetRValue(Image1.Canvas.Pixels[i,j]);
+         end;
 end;
-
+{*Salvar Imagem 2*}
 procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
   if SaveDialog1.Execute then
@@ -610,10 +629,11 @@ end;
 (*Negativa Cinza*)
 procedure TForm1.MenuItem7Click(Sender: TObject);
 begin
+
   for i:=0 to Image1.Width - 1 do
       for j:= 0 to Image1.Height - 1 do
           begin
-            ims[i, j] := 255 - ime[i, j];
+            ims[i, j] := 255 - Image1.Canvas.Pixels[i,j];
             Image2.Canvas.Pixels[i, j] := RGB(ims[i, j], ims[i, j], ims[i, j]);
           end;
 end;
