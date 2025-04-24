@@ -59,7 +59,7 @@
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="29">
+    <JumpHistory HistoryIndex="28">
       <Position>
         <Filename Value="unit1.pas"/>
         <Caret Line="217" Column="6" TopLine="214"/>
@@ -99,10 +99,6 @@
       <Position>
         <Filename Value="unit1.pas"/>
         <Caret Line="543" Column="23" TopLine="525"/>
-      </Position>
-      <Position>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="567" Column="8" TopLine="569"/>
       </Position>
       <Position>
         <Filename Value="unit1.pas"/>

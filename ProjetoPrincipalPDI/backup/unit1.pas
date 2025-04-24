@@ -54,7 +54,9 @@ type
     SaveDialog1: TSaveDialog;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Edit2Change(Sender: TObject);
     procedure Edit3Change(Sender: TObject);
+    procedure Edit4Change(Sender: TObject);
     procedure Edit5Change(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
@@ -432,17 +434,17 @@ begin
            Image2.Canvas.pixels[i,j] := RGB(S, S, S);
       end;
 end;
+{*Laplaciano Vizinhança 4*}
 procedure TForm1.MenuItem18Click(Sender: TObject);
 var
   i, j, corEq, min, max: integer;
   cor: array[0..511, 0..511] of integer;
 begin
-  // Inicializa a matriz
+
   for i := 0 to 511 do
     for j := 0 to 511 do
       cor[i, j] := 0;
 
-  // Inicia min e max
   min := 2147483647;
   max := -2147483648;
 
@@ -528,17 +530,28 @@ begin
   Image1.Picture := Image2.Picture;
 
 end;
-
+{*Magnitude*}
 procedure TForm1.Edit1Change(Sender: TObject);
 begin
 
 end;
+{*Direção*}
+procedure TForm1.Edit2Change(Sender: TObject);
+begin
 
+end;
+{*C para Compressão*}
 procedure TForm1.Edit3Change(Sender: TObject);
 begin
 
 end;
+{*Y para Compressão*}
+procedure TForm1.Edit4Change(Sender: TObject);
+begin
 
+end;
+
+{*Limiar*}
 procedure TForm1.Edit5Change(Sender: TObject);
 begin
 
@@ -551,7 +564,7 @@ begin
 
 end;
 
-(*Abri Imagem*)
+(*Abrir Imagem*)
 procedure TForm1.MenuItem2Click(Sender: TObject);
 begin
   if (OpenDialog1.Execute)
@@ -562,7 +575,7 @@ begin
               ime[i,j] := GetRValue(Image1.Canvas.Pixels[i,j]);
          end;
 end;
-
+{*Salvar Imagem 2*}
 procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
   if SaveDialog1.Execute then
