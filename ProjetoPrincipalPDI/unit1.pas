@@ -43,6 +43,9 @@ type
     MenuItem19: TMenuItem;
     MenuItem20: TMenuItem;
     MenuItem2: TMenuItem;
+    MenuItem21: TMenuItem;
+    MenuItem22: TMenuItem;
+    MenuItem23: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
@@ -78,6 +81,9 @@ type
     procedure MenuItem19Click(Sender: TObject);
     procedure MenuItem20Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem21Click(Sender: TObject);
+    procedure MenuItem22Click(Sender: TObject);
+    procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
@@ -99,6 +105,7 @@ var
   cor: TColor;
   mascara : array[0..2, 0..2] of integer;
   vetorTonsMediana : array[0..8] of integer;
+  matrizC, matrizF: array [0..127, 0..127] of integer;
 
 implementation
 
@@ -562,6 +569,114 @@ end;
 procedure TForm1.MenuItem1Click(Sender: TObject);
 begin
 
+end;
+
+procedure TForm1.MenuItem21Click(Sender: TObject);
+begin
+
+end;
+
+(*Discrete Cosine Transformation*)
+procedure TForm1.MenuItem22Click(Sender: TObject);
+var i, j, u, v, cor: integer;
+var alphaU, alphaV, Somatorios, CUV: double;
+begin
+  for i:= 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        if i = 0 then
+        begin
+          alphaU := sqrt(1/128);
+        end
+        else
+        begin
+          alphaU := sqrt(2/128);
+        end;
+
+        if j = 0 then
+        begin
+          alphaV := sqrt(1/128);
+        end
+        else
+        begin
+          alphaV := sqrt(2/128);
+        end;
+
+        Somatorios := 0;
+        for u := 0 to 127 do
+            for v := 0 to 127 do
+            begin
+              cor := getRValue(Image1.Canvas.Pixels[u,v]);
+              Somatorios := Somatorios + cor * Cos(((2 * u + 1) * i * Pi) / (2 * 128)) * Cos(((2 * v + 1) * j * Pi) / (2 * 128));
+            end;
+
+        CUV := alphaU * alphaV * Somatorios;
+        matrizC[i,j] := Round(CUV);
+      end;
+
+  for i := 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        if matrizC[i,j] > 255 then
+        begin
+           Image2.Canvas.Pixels[i,j] := RGB(255, 255, 255);
+        end
+        else
+        begin
+          if matrizC[i,j] < 0 then
+          begin
+            Image2.Canvas.Pixels[i,j] := RGB(0, 0, 0);
+          end
+          else
+          begin
+            Image2.Canvas.Pixels[i,j] := RGB(matrizC[i,j], matrizC[i,j], matrizC[i,j]);
+          end;
+        end;
+      end;
+end;
+
+(*Inverse Discrete Cosine Transform*)
+procedure TForm1.MenuItem23Click(Sender: TObject);
+var i, j, u, v, cor: integer;
+var alphaU, alphaV, CUV: double;
+begin
+  for i:= 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        CUV := 0;
+        for u := 0 to 127 do
+            for v := 0 to 127 do
+            begin
+              if u = 0 then
+              begin
+                alphaU := sqrt(1/128);
+              end
+              else
+              begin
+                alphaU := sqrt(2/128);
+              end;
+
+              if v = 0 then
+              begin
+                alphaV := sqrt(1/128);
+              end
+              else
+              begin
+                alphaV := sqrt(2/128);
+              end;
+
+              cor := matrizC[u, v];
+              CUV := CUV + alphaU * alphaV * cor * Cos(((2 * i + 1) * u * Pi) / (2 * 128)) * Cos(((2 * j + 1) * v * Pi) / (2 * 128));
+            end;
+
+        matrizF[i,j] := Round(CUV);
+      end;
+
+  for i := 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        Image2.Canvas.Pixels[i,j] := RGB(matrizF[i,j], matrizF[i,j], matrizF[i,j]);
+      end;
 end;
 
 (*Abrir Imagem*)

@@ -1,13 +1,14 @@
 object Form1: TForm1
   Left = -9
-  Height = 1090
+  Height = 824
   Top = -9
-  Width = 1784
+  Width = 1539
   Caption = 'Form1'
-  ClientHeight = 1090
-  ClientWidth = 1784
+  ClientHeight = 824
+  ClientWidth = 1539
   Menu = MainMenu1
   OnCreate = FormCreate
+  LCLVersion = '3.2.0.0'
   object Image1: TImage
     Left = 24
     Height = 512
@@ -57,7 +58,7 @@ object Form1: TForm1
   end
   object Edit1: TEdit
     Left = 1287
-    Height = 23
+    Height = 28
     Top = 136
     Width = 80
     TabOrder = 1
@@ -65,22 +66,22 @@ object Form1: TForm1
   end
   object Label1: TLabel
     Left = 1216
-    Height = 15
+    Height = 20
     Top = 139
-    Width = 58
+    Width = 72
     Caption = 'Magnitude'
     OnClick = Label1Click
   end
   object Label2: TLabel
     Left = 1216
-    Height = 15
+    Height = 20
     Top = 175
-    Width = 40
+    Width = 52
     Caption = 'Direção'
   end
   object Edit2: TEdit
     Left = 1287
-    Height = 23
+    Height = 28
     Top = 175
     Width = 80
     TabOrder = 2
@@ -88,7 +89,7 @@ object Form1: TForm1
   end
   object Edit3: TEdit
     Left = 1329
-    Height = 23
+    Height = 28
     Top = 282
     Width = 80
     TabOrder = 3
@@ -97,21 +98,21 @@ object Form1: TForm1
   end
   object Label3: TLabel
     Left = 1216
-    Height = 15
+    Height = 20
     Top = 282
-    Width = 103
+    Width = 129
     Caption = 'C para Compressão'
   end
   object Label4: TLabel
     Left = 1216
-    Height = 15
+    Height = 20
     Top = 322
-    Width = 102
+    Width = 128
     Caption = 'Y para Compressão'
   end
   object Edit4: TEdit
     Left = 1329
-    Height = 23
+    Height = 28
     Top = 322
     Width = 80
     TabOrder = 4
@@ -120,7 +121,7 @@ object Form1: TForm1
   end
   object Edit5: TEdit
     Left = 1287
-    Height = 23
+    Height = 28
     Top = 211
     Width = 80
     TabOrder = 5
@@ -129,9 +130,9 @@ object Form1: TForm1
   end
   object Limiar: TLabel
     Left = 1216
-    Height = 15
+    Height = 20
     Top = 211
-    Width = 33
+    Width = 41
     Caption = 'Limiar'
     OnClick = LimiarClick
   end
@@ -217,6 +218,18 @@ object Form1: TForm1
       object MenuItem20: TMenuItem
         Caption = 'Somar Imagens'
         OnClick = MenuItem20Click
+      end
+      object MenuItem21: TMenuItem
+        Caption = 'Discrete Cossene Transform'
+        OnClick = MenuItem21Click
+        object MenuItem22: TMenuItem
+          Caption = 'DCT'
+          OnClick = MenuItem22Click
+        end
+        object MenuItem23: TMenuItem
+          Caption = 'Inversa DCT'
+          OnClick = MenuItem23Click
+        end
       end
     end
   end
