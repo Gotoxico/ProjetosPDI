@@ -55,4 +55,4 @@ This is the main project module, which includes the following functionalities:
 
 ## 👥 Authors
 - Kauan dos Santos Loche  
-- [Your Name Here]
+- Rodrigo Isao Goto
