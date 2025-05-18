@@ -576,7 +576,9 @@ begin
 end;
 
 procedure TForm1.MenuItem22Click(Sender: TObject);
+var matrizC : array[0..127, 0..127] of integer;
 begin
+
 
 end;
 

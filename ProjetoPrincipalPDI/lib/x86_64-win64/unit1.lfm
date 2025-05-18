@@ -1,11 +1,11 @@
 object Form1: TForm1
   Left = -9
-  Height = 824
+  Height = 1108
   Top = -9
-  Width = 1539
+  Width = 1716
   Caption = 'Form1'
-  ClientHeight = 824
-  ClientWidth = 1539
+  ClientHeight = 1108
+  ClientWidth = 1716
   Menu = MainMenu1
   OnCreate = FormCreate
   object Image1: TImage
@@ -37,23 +37,9 @@ object Form1: TForm1
   end
   object Image3: TImage
     Left = 24
-    Height = 512
+    Height = 458
     Top = 560
-    Width = 512
-    OnClick = Image1Click
-  end
-  object Image4: TImage
-    Left = 568
-    Height = 512
-    Top = 560
-    Width = 512
-    OnClick = Image1Click
-  end
-  object Image5: TImage
-    Left = 1112
-    Height = 512
-    Top = 560
-    Width = 512
+    Width = 914
     OnClick = Image1Click
   end
   object Edit1: TEdit
@@ -197,7 +183,7 @@ object Form1: TForm1
         OnClick = MenuItem8Click
       end
       object MenuItem9: TMenuItem
-        Caption = 'SepararCanais'
+        Caption = 'SepararCanais (Inoperante)'
         OnClick = MenuItem9Click
       end
       object MenuItem12: TMenuItem
@@ -263,6 +249,10 @@ object Form1: TForm1
           Caption = 'Inverse DCT Filtro Passa Alta'
           OnClick = MenuItem25Click
         end
+      end
+      object MenuItem26: TMenuItem
+        Caption = 'Pseudo Cores'
+        OnClick = MenuItem26Click
       end
     end
   end
