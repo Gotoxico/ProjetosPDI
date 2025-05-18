@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, Menus,
-  StdCtrls, Windows, LCLIntf, LCLType, LCLProc, Math;
+  StdCtrls, Windows, LCLIntf, LCLType, LCLProc, PopupNotifier, Math;
 
 type
 
@@ -19,6 +19,7 @@ type
     Edit3: TEdit;
     Edit4: TEdit;
     Edit5: TEdit;
+    Edit6: TEdit;
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
@@ -28,6 +29,8 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
     Limiar: TLabel;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
@@ -46,6 +49,8 @@ type
     MenuItem21: TMenuItem;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
+    MenuItem24: TMenuItem;
+    MenuItem25: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
@@ -54,6 +59,7 @@ type
     MenuItem8: TMenuItem;
     MenuItem9: TMenuItem;
     OpenDialog1: TOpenDialog;
+    PopupNotifier1: TPopupNotifier;
     SaveDialog1: TSaveDialog;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
@@ -61,13 +67,17 @@ type
     procedure Edit3Change(Sender: TObject);
     procedure Edit4Change(Sender: TObject);
     procedure Edit5Change(Sender: TObject);
+    procedure Edit6Change(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure Image1Click(Sender: TObject);
     procedure Image2Click(Sender: TObject);
-    procedure Image2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer
-      );
+    procedure Image2MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Image2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure Label1Click(Sender: TObject);
+    procedure Label5Click(Sender: TObject);
+    procedure Label6Click(Sender: TObject);
     procedure LimiarClick(Sender: TObject);
     procedure MenuItem10Click(Sender: TObject);
     procedure MenuItem11Click(Sender: TObject);
@@ -84,6 +94,8 @@ type
     procedure MenuItem21Click(Sender: TObject);
     procedure MenuItem22Click(Sender: TObject);
     procedure MenuItem23Click(Sender: TObject);
+    procedure MenuItem24Click(Sender: TObject);
+    procedure MenuItem25Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
@@ -92,6 +104,8 @@ type
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
     procedure MenuItem9Click(Sender: TObject);
+    procedure PopupNotifier1Close(Sender: TObject; var CloseAction: TCloseAction
+      );
   private
 
   public
@@ -127,6 +141,18 @@ procedure TForm1.Image2Click(Sender: TObject);
 begin
 
 end;
+
+(*Evento para adicionar Ruído em Espectro DCT*)
+procedure TForm1.Image2MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  Image2.Canvas.Pixels[X, Y] := RGBToColor(255, 255, 255);
+  if X and Y <= 127 then
+  begin
+    MatrizC[X,Y] := 255;
+  end;
+end;
+
 {*Evento ao mover o mouse por cima da imagem 2*}
 procedure TForm1.Image2MouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
@@ -136,6 +162,16 @@ begin
 end;
 
 procedure TForm1.Label1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Label5Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Label6Click(Sender: TObject);
 begin
 
 end;
@@ -564,6 +600,11 @@ begin
 
 end;
 
+procedure TForm1.Edit6Change(Sender: TObject);
+begin
+
+end;
+
 
 (*Sub-Menu 1*)
 procedure TForm1.MenuItem1Click(Sender: TObject);
@@ -578,8 +619,8 @@ end;
 
 (*Discrete Cosine Transformation*)
 procedure TForm1.MenuItem22Click(Sender: TObject);
-var i, j, u, v, cor, minVal, maxVal: integer;
-var alphaU, alphaV, Somatorios, CUV, normalizado : double;
+var i, j, u, v, cor: integer;
+var alphaU, alphaV, Somatorios, CUV: double;
 begin
   for i:= 0 to 127 do
       for j := 0 to 127 do
@@ -637,9 +678,13 @@ end;
 
 (*Inverse Discrete Cosine Transform*)
 procedure TForm1.MenuItem23Click(Sender: TObject);
-var i, j, u, v, cor, minVal, maxVal: integer;
-var alphaU, alphaV, CUV, normalizado : double;
+var i, j, u, v, cor: integer;
+var alphaU, alphaV, CUV: double;
 begin
+  PopupNotifier1.Title := 'Opcional';
+  PopupNotifier1.Text := 'Após Finalização DCT opcionalmente pode adicionar ruído branco à imagem adicionando pixels RGB(255, 255, 255) ao espectro DCT em canvas 2';
+  PopupNotifier1.ShowAt(Mouse.CursorPos);
+
   for i:= 0 to 127 do
       for j := 0 to 127 do
       begin
@@ -676,6 +721,124 @@ begin
       for j := 0 to 127 do
       begin
         Image2.Canvas.Pixels[i,j] := RGB(matrizF[i,j], matrizF[i,j], matrizF[i,j]);
+      end;
+end;
+
+(*Inverse DCT Filtro Passa Baixa*)
+procedure TForm1.MenuItem24Click(Sender: TObject);
+var i, j, u, v, cor: integer;
+var alphaU, alphaV, CUV: double;
+var matrizCopia, matrizResultado: array [0..127, 0..127] of integer;
+begin
+  for i := 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        if Sqrt(i*i + j*j) >= StrToFloat(Edit6.Text) then
+        begin
+          matrizCopia[i,j] := 0;
+        end
+        else
+        begin
+          matrizCopia[i,j] := matrizC[i,j];
+        end;
+      end;
+
+
+  for i:= 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        CUV := 0;
+        for u := 0 to 127 do
+            for v := 0 to 127 do
+            begin
+              if u = 0 then
+              begin
+                alphaU := sqrt(1/128);
+              end
+              else
+              begin
+                alphaU := sqrt(2/128);
+              end;
+
+              if v = 0 then
+              begin
+                alphaV := sqrt(1/128);
+              end
+              else
+              begin
+                alphaV := sqrt(2/128);
+              end;
+
+              cor := matrizCopia[u, v];
+              CUV := CUV + alphaU * alphaV * cor * Cos(((2 * i + 1) * u * Pi) / (2 * 128)) * Cos(((2 * j + 1) * v * Pi) / (2 * 128));
+            end;
+
+        matrizResultado[i,j] := Round(CUV);
+      end;
+
+  for i := 0 to 127 do
+      for j := 0 to 127 do
+      begin
+      Image2.Canvas.Pixels[i, j] := RGB(matrizResultado[i, j], matrizResultado[i, j], matrizResultado[i, j]);
+      end;
+end;
+
+(*Inverse DCT Filtro Passa Alta*)
+procedure TForm1.MenuItem25Click(Sender: TObject);
+var i, j, u, v, cor: integer;
+var alphaU, alphaV, CUV: double;
+var matrizCopia, matrizResultado: array [0..127, 0..127] of integer;
+begin
+  for i := 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        if Sqrt(i*i + j*j) <= StrToFloat(Edit6.Text) then
+        begin
+          matrizCopia[i,j] := 0;
+        end
+        else
+        begin
+          matrizCopia[i,j] := matrizC[i,j];
+        end;
+      end;
+
+
+  for i:= 0 to 127 do
+      for j := 0 to 127 do
+      begin
+        CUV := 0;
+        for u := 0 to 127 do
+            for v := 0 to 127 do
+            begin
+              if u = 0 then
+              begin
+                alphaU := sqrt(1/128);
+              end
+              else
+              begin
+                alphaU := sqrt(2/128);
+              end;
+
+              if v = 0 then
+              begin
+                alphaV := sqrt(1/128);
+              end
+              else
+              begin
+                alphaV := sqrt(2/128);
+              end;
+
+              cor := matrizCopia[u, v];
+              CUV := CUV + alphaU * alphaV * cor * Cos(((2 * i + 1) * u * Pi) / (2 * 128)) * Cos(((2 * j + 1) * v * Pi) / (2 * 128));
+            end;
+
+        matrizResultado[i,j] := Max(0, Min(255, Round(CUV)));
+      end;
+
+  for i := 0 to 127 do
+      for j := 0 to 127 do
+      begin
+      Image2.Canvas.Pixels[i, j] := RGB(matrizResultado[i, j], matrizResultado[i, j], matrizResultado[i, j]);
       end;
 end;
 
@@ -781,6 +944,12 @@ begin
             Image4.Canvas.Pixels[i, j] := RGB(0,g,0);
             Image5.Canvas.Pixels[i, j] := RGB(0,0,b);
           end;
+
+end;
+
+procedure TForm1.PopupNotifier1Close(Sender: TObject;
+  var CloseAction: TCloseAction);
+begin
 
 end;
 
