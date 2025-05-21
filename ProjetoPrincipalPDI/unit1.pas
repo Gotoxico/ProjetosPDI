@@ -23,8 +23,6 @@ type
     Image1: TImage;
     Image2: TImage;
     Image3: TImage;
-    Image4: TImage;
-    Image5: TImage;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -51,6 +49,7 @@ type
     MenuItem23: TMenuItem;
     MenuItem24: TMenuItem;
     MenuItem25: TMenuItem;
+    MenuItem26: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
@@ -96,6 +95,7 @@ type
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
     procedure MenuItem25Click(Sender: TObject);
+    procedure MenuItem26Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
@@ -842,6 +842,69 @@ begin
       end;
 end;
 
+(*Pseudo Cores*)
+procedure TForm1.MenuItem26Click(Sender: TObject);
+var i, j, tomDeCinza: integer;
+var matriz: array [0..913, 0..457] of integer;
+var tabelaCores: array[0..255, 0..2] of integer;
+var matrizColorida: array [0..913, 0..457] of TColor;
+begin
+  if (OpenDialog1.Execute)
+     then Image3.Picture.LoadFromFile(OpenDialog1.FileName);
+
+  for i := 0 to 913 do
+      for j := 0 to 457 do
+      begin
+           matriz[i,j] := GetRValue(Image3.Canvas.Pixels[i,j]);
+      end;
+
+  (*Montando Tabela de Cores*)
+  for i := 0 to 255 do
+  begin
+    if i < 64 then
+    begin
+      tabelaCores[i,0] := 0;
+      tabelaCores[i,1] := 0;
+      tabelaCores[i,2] := i * 4;
+    end;
+
+    if (i >= 64) and (i < 128) then
+    begin
+      tabelaCores[i,0] := 0;
+      tabelaCores[i,1] := (i - 64) * 4;
+      tabelaCores[i,2] := 255;
+    end;
+
+    if (i >= 128) and (i < 192) then
+    begin
+      tabelaCores[i,0] := 0;
+      tabelaCores[i,1] := 255;
+      tabelaCores[i,2] := 255 - (i - 128) * 4;
+    end;
+
+    if i >= 192 then
+    begin
+      tabelaCores[i,0] := (i - 192) * 4;
+      tabelaCores[i,1] := 255;
+      tabelaCores[i,2] := 0;
+    end;
+  end;
+
+  (*Carregando numa matriz RGB*)
+  for i := 0 to 913 do
+      for j := 0 to 457 do
+      begin
+        tomDeCinza := matriz[i,j];
+        matrizColorida[i,j] := RGB(tabelaCores[tomDeCinza, 0], tabelaCores[tomDeCinza, 1], tabelaCores[tomDeCinza, 2]);
+      end;
+
+  for i := 0 to 913 do
+      for j := 0 to 457 do
+      begin
+        Image3.Canvas.Pixels[i,j] := matrizColorida[i,j];
+      end;
+end;
+
 (*Abrir Imagem*)
 procedure TForm1.MenuItem2Click(Sender: TObject);
 begin
@@ -930,6 +993,12 @@ begin
           end;
 end;
 
+procedure TForm1.MenuItem9Click(Sender: TObject);
+begin
+
+end;
+
+(*Comentado devido a necessidade de pseudo cores
 (*Separar Canais RGB em Três Imagens*)
 procedure TForm1.MenuItem9Click(Sender: TObject);
 begin
@@ -946,6 +1015,7 @@ begin
           end;
 
 end;
+*)
 
 procedure TForm1.PopupNotifier1Close(Sender: TObject;
   var CloseAction: TCloseAction);
