@@ -50,6 +50,9 @@ type
     MenuItem24: TMenuItem;
     MenuItem25: TMenuItem;
     MenuItem26: TMenuItem;
+    MenuItem27: TMenuItem;
+    MenuItem28: TMenuItem;
+    MenuItem29: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
@@ -96,6 +99,9 @@ type
     procedure MenuItem24Click(Sender: TObject);
     procedure MenuItem25Click(Sender: TObject);
     procedure MenuItem26Click(Sender: TObject);
+    procedure MenuItem27Click(Sender: TObject);
+    procedure MenuItem28Click(Sender: TObject);
+    procedure MenuItem29Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
@@ -904,6 +910,73 @@ begin
         Image3.Canvas.Pixels[i,j] := matrizColorida[i,j];
       end;
 end;
+{*Filtro do máximo*}
+procedure TForm1.MenuItem27Click(Sender: TObject);
+var
+ max, pixel: integer;
+begin
+  for i := 1 to Image1.Width - 2 do
+    for j := 1 to Image1.Height - 2 do
+    begin
+      max := 0;
+
+      for x := -1 to 1 do
+        for y := -1 to 1 do
+        begin
+          pixel := GetRValue(ColorToRGB(Image1.Canvas.Pixels[i + x, j + y]));
+          if pixel > max then
+            max := pixel;
+        end;
+
+      Image2.Canvas.Pixels[i, j] := RGB(max, max, max);
+    end;
+end;
+
+procedure TForm1.MenuItem28Click(Sender: TObject);
+var
+   min, pixel: integer;
+begin
+  for i := 1 to Image1.Width - 2 do
+    for j := 1 to Image1.Height - 2 do
+    begin
+      min := 256;
+
+      for x := -1 to 1 do
+        for y := -1 to 1 do
+        begin
+          pixel := GetRValue(ColorToRGB(Image1.Canvas.Pixels[i + x, j + y]));
+          if pixel < min then
+            min := pixel;
+        end;
+
+      Image2.Canvas.Pixels[i, j] := RGB(min, min, min);
+    end;
+end;
+{*Ponto Médio*}
+procedure TForm1.MenuItem29Click(Sender: TObject);
+var
+   max, min, pixel: integer;
+begin
+  for i := 1 to Image1.Width - 2 do
+    for j := 1 to Image1.Height - 2 do
+    begin
+      min := 256;
+      max := -1;
+
+      for x := -1 to 1 do
+        for y := -1 to 1 do
+        begin
+          pixel := GetRValue(ColorToRGB(Image1.Canvas.Pixels[i + x, j + y]));
+          if pixel < min then
+            min := pixel;
+          if pixel > max then
+            max := pixel
+        end;
+      pixel:= round(1/2*(max+min));
+      Image2.Canvas.Pixels[i, j] := RGB(pixel, pixel, pixel);
+    end;
+end;
+
 
 (*Abrir Imagem*)
 procedure TForm1.MenuItem2Click(Sender: TObject);
