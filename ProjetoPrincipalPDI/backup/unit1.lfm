@@ -1,25 +1,26 @@
 object Form1: TForm1
   Left = -9
-  Height = 824
+  Height = 1385
   Top = -9
-  Width = 1539
+  Width = 2145
   Caption = 'Form1'
-  ClientHeight = 824
-  ClientWidth = 1539
+  ClientHeight = 1055
+  ClientWidth = 1924
+  DesignTimePPI = 120
   Menu = MainMenu1
   OnCreate = FormCreate
   object Image1: TImage
-    Left = 24
+    Left = 30
     Height = 512
-    Top = 16
+    Top = 20
     Width = 512
     AutoSize = True
     OnClick = Image1Click
   end
   object Image2: TImage
-    Left = 640
+    Left = 800
     Height = 512
-    Top = 16
+    Top = 20
     Width = 512
     AutoSize = True
     OnClick = Image2Click
@@ -27,143 +28,129 @@ object Form1: TForm1
     OnMouseMove = Image2MouseMove
   end
   object Button1: TButton
-    Left = 552
-    Height = 25
-    Top = 264
-    Width = 75
+    Left = 690
+    Height = 31
+    Top = 330
+    Width = 94
     Caption = '<-'
     TabOrder = 0
     OnClick = Button1Click
   end
   object Image3: TImage
-    Left = 24
-    Height = 512
-    Top = 560
-    Width = 512
-    OnClick = Image1Click
-  end
-  object Image4: TImage
-    Left = 568
-    Height = 512
-    Top = 560
-    Width = 512
-    OnClick = Image1Click
-  end
-  object Image5: TImage
-    Left = 1112
-    Height = 512
-    Top = 560
-    Width = 512
+    Left = 30
+    Height = 572
+    Top = 700
+    Width = 1142
     OnClick = Image1Click
   end
   object Edit1: TEdit
-    Left = 1287
-    Height = 23
-    Top = 136
-    Width = 80
+    Left = 1609
+    Height = 28
+    Top = 170
+    Width = 100
     TabOrder = 1
     OnChange = Edit1Change
   end
   object Label1: TLabel
-    Left = 1216
-    Height = 15
-    Top = 139
-    Width = 58
+    Left = 1520
+    Height = 20
+    Top = 174
+    Width = 72
     Caption = 'Magnitude'
     OnClick = Label1Click
   end
   object Label2: TLabel
-    Left = 1216
-    Height = 15
-    Top = 175
-    Width = 40
+    Left = 1520
+    Height = 20
+    Top = 219
+    Width = 52
     Caption = 'Direção'
   end
   object Edit2: TEdit
-    Left = 1287
-    Height = 23
-    Top = 175
-    Width = 80
+    Left = 1609
+    Height = 28
+    Top = 219
+    Width = 100
     TabOrder = 2
     OnChange = Edit2Change
   end
   object Edit3: TEdit
-    Left = 1329
-    Height = 23
-    Top = 282
-    Width = 80
+    Left = 1661
+    Height = 28
+    Top = 352
+    Width = 100
     TabOrder = 3
     TextHint = 'C'
     OnChange = Edit3Change
   end
   object Label3: TLabel
-    Left = 1216
-    Height = 15
-    Top = 282
-    Width = 103
+    Left = 1520
+    Height = 20
+    Top = 352
+    Width = 129
     Caption = 'C para Compressão'
   end
   object Label4: TLabel
-    Left = 1216
-    Height = 15
-    Top = 322
-    Width = 102
+    Left = 1520
+    Height = 20
+    Top = 402
+    Width = 128
     Caption = 'Y para Compressão'
   end
   object Edit4: TEdit
-    Left = 1329
-    Height = 23
-    Top = 322
-    Width = 80
+    Left = 1661
+    Height = 28
+    Top = 402
+    Width = 100
     TabOrder = 4
     TextHint = 'Y'
     OnChange = Edit4Change
   end
   object Edit5: TEdit
-    Left = 1287
-    Height = 23
-    Top = 211
-    Width = 80
+    Left = 1609
+    Height = 28
+    Top = 264
+    Width = 100
     TabOrder = 5
     Text = '128'
     OnChange = Edit5Change
   end
   object Limiar: TLabel
-    Left = 1216
-    Height = 15
-    Top = 211
-    Width = 33
+    Left = 1520
+    Height = 20
+    Top = 264
+    Width = 41
     Caption = 'Limiar'
     OnClick = LimiarClick
   end
   object Edit6: TEdit
-    Left = 1329
-    Height = 23
-    Top = 376
-    Width = 80
+    Left = 1661
+    Height = 28
+    Top = 470
+    Width = 100
     TabOrder = 6
     TextHint = 'Corte'
     OnChange = Edit6Change
   end
   object Label5: TLabel
-    Left = 1216
-    Height = 15
-    Top = 384
-    Width = 85
+    Left = 1520
+    Height = 20
+    Top = 480
+    Width = 106
     Caption = 'Corte Filtro DCT'
     OnClick = Label5Click
   end
   object Label6: TLabel
-    Left = 1160
-    Height = 15
-    Top = 400
-    Width = 351
+    Left = 1450
+    Height = 20
+    Top = 500
+    Width = 442
     Caption = 'Clickar Espectro DCT no canvas direita para adicionar ruído branco'
     OnClick = Label6Click
   end
   object MainMenu1: TMainMenu
-    Left = 1440
-    Top = 38
+    Left = 1800
+    Top = 48
     object MenuItem1: TMenuItem
       Caption = 'Arquivo'
       Default = True
@@ -197,7 +184,7 @@ object Form1: TForm1
         OnClick = MenuItem8Click
       end
       object MenuItem9: TMenuItem
-        Caption = 'SepararCanais'
+        Caption = 'SepararCanais (Inoperante)'
         OnClick = MenuItem9Click
       end
       object MenuItem12: TMenuItem
@@ -264,15 +251,31 @@ object Form1: TForm1
           OnClick = MenuItem25Click
         end
       end
+      object MenuItem26: TMenuItem
+        Caption = 'Pseudo Cores'
+        OnClick = MenuItem26Click
+      end
+      object MenuItem27: TMenuItem
+        Caption = 'Filtro do Máximo'
+        OnClick = MenuItem27Click
+      end
+      object MenuItem28: TMenuItem
+        Caption = 'Filtro do Mínimo'
+        OnClick = MenuItem28Click
+      end
+      object MenuItem29: TMenuItem
+        Caption = 'Ponto Médio'
+        OnClick = MenuItem29Click
+      end
     end
   end
   object OpenDialog1: TOpenDialog
-    Left = 1440
-    Top = 90
+    Left = 1800
+    Top = 113
   end
   object SaveDialog1: TSaveDialog
-    Left = 1440
-    Top = 141
+    Left = 1800
+    Top = 176
   end
   object PopupNotifier1: TPopupNotifier
     Color = clInfoBk
@@ -280,11 +283,13 @@ object Form1: TForm1
       07544269746D617000000000
     }
     Text = 'Text'
+    TextFont.Height = -15
     Title = 'Caption'
+    TitleFont.Height = -15
     TitleFont.Style = [fsBold]
     Visible = False
     OnClose = PopupNotifier1Close
-    Left = 1440
-    Top = 200
+    Left = 1800
+    Top = 250
   end
 end
