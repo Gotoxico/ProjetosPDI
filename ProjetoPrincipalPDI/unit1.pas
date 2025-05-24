@@ -54,6 +54,7 @@ type
     MenuItem28: TMenuItem;
     MenuItem29: TMenuItem;
     MenuItem3: TMenuItem;
+    MenuItem30: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -61,7 +62,6 @@ type
     MenuItem8: TMenuItem;
     MenuItem9: TMenuItem;
     OpenDialog1: TOpenDialog;
-    PopupNotifier1: TPopupNotifier;
     SaveDialog1: TSaveDialog;
     procedure Button1Click(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
@@ -103,6 +103,7 @@ type
     procedure MenuItem28Click(Sender: TObject);
     procedure MenuItem29Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem30Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
@@ -110,8 +111,9 @@ type
     procedure MenuItem7Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
     procedure MenuItem9Click(Sender: TObject);
-    procedure PopupNotifier1Close(Sender: TObject; var CloseAction: TCloseAction
-      );
+    procedure HSLtoRGB(H, S, L: Integer; var R, G, B: Integer);
+    procedure RGBtoHSL(R, G, B : Integer; var H, S, L: Integer);
+
   private
 
   public
@@ -687,10 +689,6 @@ procedure TForm1.MenuItem23Click(Sender: TObject);
 var i, j, u, v, cor: integer;
 var alphaU, alphaV, CUV: double;
 begin
-  PopupNotifier1.Title := 'Opcional';
-  PopupNotifier1.Text := 'Após Finalização DCT opcionalmente pode adicionar ruído branco à imagem adicionando pixels RGB(255, 255, 255) ao espectro DCT em canvas 2';
-  PopupNotifier1.Show();
-
   for i:= 0 to 127 do
       for j := 0 to 127 do
       begin
@@ -989,6 +987,142 @@ begin
               ime[i,j] := GetRValue(Image1.Canvas.Pixels[i,j]);
          end;
 end;
+
+procedure TForm1.HSLtoRGB(H, S, L: Integer; var R, G, B: Integer);
+var
+  C, X, HLinha, M, R1, G1, B1, H1, S1, L1 : Double;
+begin
+  H1 := H / 255.0 * 360.0;
+  S1 := S / 255.0;
+  L1 := L / 255.0;
+
+  C := (1 - Abs(2 * L1 - 1)) * S1;
+  HLinha := H1 / 60.0;
+  X := C * (1 - Abs(Frac(HLinha) * 2 - 1));
+
+  if (HLinha >= 0) and (HLinha < 1) then
+  begin
+    R1 := C; G1 := X; B1 := 0;
+  end
+  else if (HLinha >= 1) and (HLinha < 2) then
+  begin
+    R1 := X; G1 := C; B1 := 0;
+  end
+  else if (HLinha >= 2) and (HLinha < 3) then
+  begin
+    R1 := 0; G1 := C; B1 := X;
+  end
+  else if (HLinha >= 3) and (HLinha < 4) then
+  begin
+    R1 := 0; G1 := X; B1 := C;
+  end
+  else if (HLinha >= 4) and (HLinha < 5) then
+  begin
+    R1 := X; G1 := 0; B1 := C;
+  end
+  else
+  begin
+    R1 := C; G1 := 0; B1 := X;
+  end;
+
+  M := L1 - C / 2;
+
+  R := Round((R1 + M) * 255);
+  G := Round((G1 + M) * 255);
+  B := Round((B1 + M) * 255);
+end;
+
+procedure TForm1.RGBtoHSL(R, G, B : Integer; var H, S, L: Integer);
+var
+  R1, G1, B1, XMax, XMin, C, H1, S1, L1 : Double;
+begin
+  R1 := R / 255.0;
+  G1 := G / 255.0;
+  B1 := B / 255.0;
+
+  XMax := Max(R1, Max(G1, B1));
+  XMin := Min(R1, Min(G1, B1));
+  C := XMax - XMin;
+  L1 := (XMax + XMin) / 2;
+
+  if C = 0 then
+    H1 := 0
+  else if XMax = R1 then
+    H1 := 60.0 * ((G1 - B1) / C)
+  else if XMax = G1 then
+    H1 := 60.0 * ((B1 - R1) / C + 2)
+  else
+    H1 := 60.0 * ((R1 - G1) / C + 4);
+
+  if H1 < 0 then
+    H1 := H1 + 360.0;
+
+  if (L1 = 0) or (L1 = 1) then
+    S1 := 0
+  else
+    S1 := C / (1 - Abs(2 * L1 - 1));
+
+  H := Round(H1 / 360.0 * 255);
+  S := Round(S1 * 255);
+  L := Round(L1 * 255);
+end;
+
+(*Equalização Histograma HSL*)
+procedure TForm1.MenuItem30Click(Sender: TObject);
+var
+  i, j: integer;
+  matrizH, matrizS, matrizL, matrizLModificada: array[0..511, 0..511] of integer;
+  H, S, L, R, G, B: integer;
+  hist, histAcu: array [0..255] of integer;
+  novoValor: array [0..255] of Byte;
+begin
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+    begin
+      RGBtoHSL(GetRValue(Image1.Canvas.Pixels[i,j]), GetGValue(Image1.Canvas.Pixels[i,j]), GetBValue(Image1.Canvas.Pixels[i,j]), H, S, L);
+      matrizH[i,j] := H;
+      matrizS[i,j] := S;
+      matrizL[i,j] := L;
+    end;
+
+  for i := 0 to 255 do
+  begin
+    hist[i] := 0;
+    histAcu[i] := 0;
+    novoValor[i] := 0;
+  end;
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+    begin
+      Inc(hist[matrizL[i,j]]);
+    end;
+
+  histAcu[0] := hist[0];
+  for i := 1 to 255 do
+  begin
+    histAcu[i] := histAcu[i-1] + hist[i];
+  end;
+
+  for i := 0 to 255 do
+  begin
+    novoValor[i] := Min(255, Round(255 * histAcu[i] / (512 * 512)));
+  end;
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+    begin
+      matrizLModificada[i,j] := novoValor[matrizL[i,j]];
+    end;
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+    begin
+      HSLtoRGB(matrizH[i,j], matrizS[i,j], matrizLModificada[i,j], R, G, B);
+      Image2.Canvas.Pixels[i,j] := RGB(R, G, B);
+    end;
+end;
+
 {*Salvar Imagem 2*}
 procedure TForm1.MenuItem3Click(Sender: TObject);
 begin
@@ -1090,11 +1224,6 @@ begin
 end;
 *)
 
-procedure TForm1.PopupNotifier1Close(Sender: TObject;
-  var CloseAction: TCloseAction);
-begin
-
-end;
 
 end.
 
