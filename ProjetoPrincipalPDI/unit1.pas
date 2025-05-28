@@ -55,6 +55,7 @@ type
     MenuItem29: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem30: TMenuItem;
+    MenuItem31: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -104,6 +105,7 @@ type
     procedure MenuItem29Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem30Click(Sender: TObject);
+    procedure MenuItem31Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
@@ -1121,6 +1123,89 @@ begin
       HSLtoRGB(matrizH[i,j], matrizS[i,j], matrizLModificada[i,j], R, G, B);
       Image2.Canvas.Pixels[i,j] := RGB(R, G, B);
     end;
+end;
+
+(*Laplaciano e Laplaciano Gaussiana Side by Side*)
+procedure TForm1.MenuItem31Click(Sender: TObject);
+var
+   cor: array[0..4, 0..4] of integer;
+   soma: integer;
+   i, j, corEq, min, max: integer;
+   cor1: array[0..511, 0..511] of integer;
+begin
+  (*Laplaciano N4*)
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+      cor1[i, j] := 0;
+
+  min := 2147483647;
+  max := -2147483648;
+
+
+  for i := 1 to Image1.Height - 2 do
+    for j := 1 to Image1.Width - 2 do
+    begin
+      cor1[i, j] :=
+        -1 * (Image1.Canvas.Pixels[j - 1, i] +
+              Image1.Canvas.Pixels[j + 1, i] +
+              Image1.Canvas.Pixels[j, i - 1] +
+              Image1.Canvas.Pixels[j, i + 1]) +
+         4 * Image1.Canvas.Pixels[j, i];
+
+
+      if cor1[i, j] < min then min := cor1[i, j];
+      if cor1[i, j] > max then max := cor1[i, j];
+    end;
+
+
+  if max = min then max := min + 1;
+
+
+  for i := 1 to Image1.Height - 2 do
+    for j := 1 to Image1.Width - 2 do
+    begin
+      corEq := Round(((cor1[i, j] - min) / (max - min)) * 255);
+
+
+      if corEq < 0 then corEq := 0;
+      if corEq > 255 then corEq := 255;
+
+      Image1.Canvas.Pixels[j, i] := RGB(corEq, corEq, corEq);
+    end;
+
+  (*Laplaciano da Gaussiana*)
+  for i :=0 to 4 do
+    for j:=0 to 4 do
+      begin
+        cor[i,j] := 0;
+      end;
+  cor[0,2]:=-1;
+  cor[1,1]:=-1;
+  cor[2,0]:=-1;
+  cor[3,1]:=-1;
+  cor[4,2]:=-1;
+  cor[3,3]:=-1;
+  cor[2,4]:=-1;
+  cor[1,3]:=-1;
+  cor[1,2]:=-2;
+  cor[2,1]:=-2;
+  cor[3,2]:=-2;
+  cor[2,3]:=-2;
+  cor[2,2]:=16;
+
+  for i:=2 to Image1.Height -3 do
+    for j:= 2 to Image1.Width - 3 do
+      begin
+        soma:=0;
+        for x:= -2 to 2 do
+          for y:= -2 to 2 do
+            soma:= soma+ GetRValue(Ime[i+x,j+y])* cor[x+2,y+2];
+
+        if soma < 0 then soma := 0;
+        if soma > 255 then soma := 255;
+
+        Image2.Canvas.Pixels[i,j] := RGB(soma, soma, soma);
+      end;
 end;
 
 {*Salvar Imagem 2*}
