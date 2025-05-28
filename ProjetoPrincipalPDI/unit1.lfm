@@ -270,6 +270,10 @@ object Form1: TForm1
         Caption = 'Equalização Histograma HSL'
         OnClick = MenuItem30Click
       end
+      object MenuItem31: TMenuItem
+        Caption = 'Laplaciano e Laplaciano Gaussiana Side by Side'
+        OnClick = MenuItem31Click
+      end
     end
   end
   object OpenDialog1: TOpenDialog
