@@ -56,6 +56,8 @@ type
     MenuItem3: TMenuItem;
     MenuItem30: TMenuItem;
     MenuItem31: TMenuItem;
+    MenuItem32: TMenuItem;
+    MenuItem33: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -106,6 +108,8 @@ type
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem30Click(Sender: TObject);
     procedure MenuItem31Click(Sender: TObject);
+    procedure MenuItem32Click(Sender: TObject);
+    procedure MenuItem33Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
@@ -1205,6 +1209,216 @@ begin
         if soma > 255 then soma := 255;
 
         Image2.Canvas.Pixels[i,j] := RGB(soma, soma, soma);
+      end;
+end;
+
+(*Otsu com Limiarização*)
+procedure TForm1.MenuItem32Click(Sender: TObject);
+var totalTons: array[0..255] of integer;
+var probabilidadeTons: array[0..255] of float;
+var i, j: integer;
+var miTesao, varianciaTotal, w0, w1, miTesinho, u0, u1, varianciaLocal, minNi, limiarOtimo, ni, maxVarEntre : float;
+begin
+  for i := 0 to 255 do
+  begin
+    totalTons[i] := 0;
+  end;
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+    begin
+      totalTons[GetRValue(Image1.Canvas.Pixels[i,j])] := totalTons[GetRValue(Image1.Canvas.Pixels[i,j])] + 1;
+    end;
+
+  for i := 0 to 255 do
+  begin
+    probabilidadeTons[i] :=  totalTons[i] / (512 * 512);
+  end;
+
+  miTesao := 0.0;
+  for i := 0 to 255 do
+  begin
+    miTesao := miTesao + i * probabilidadeTons[i];
+  end;
+
+  varianciaTotal := 0.0;
+  for i := 0 to 255 do
+  begin
+    varianciaTotal := varianciaTotal + ((i - miTesao) * (i - miTesao)) * probabilidadeTons[i];
+  end;
+
+  maxVarEntre := -1.0;
+  limiarOtimo := 0;
+
+  for j := 0 to 255 do
+  begin
+    w0 := 0.0;
+    miTesinho := 0.0;
+
+    for i := 0 to j do
+    begin
+      w0 := w0 + probabilidadeTons[i];
+    end;
+
+    w1 := 1.0 - w0;
+
+    for i := 0 to j do
+    begin
+      miTesinho := miTesinho + i * probabilidadeTons[i];
+    end;
+
+    if w0 > 0 then
+    begin
+       u0 := miTesinho / w0;
+    end
+    else
+    begin
+      u0 := 0.0;
+    end;
+
+    if w1 > 0 then
+    begin
+      u1 := (miTesao - miTesinho) / w1;
+    end
+    else
+    begin
+      u1 := 0.0;
+    end;
+
+    varianciaLocal := w0 * w1 * ((u1 - u0) * (u1 - u0));
+
+    if varianciaTotal > 0 then
+    begin
+       ni := varianciaLocal / varianciaTotal;
+    end
+    else
+    begin
+      ni := MaxFloat;
+    end;
+
+    if varianciaLocal > maxVarEntre then
+    begin
+      maxVarEntre := varianciaLocal;
+      limiarOtimo := j;
+    end;
+  end;
+
+  for i := 0 to 511 do
+      for j := 0 to 511 do
+      begin
+        if GetRValue(Image1.Canvas.Pixels[i,j]) >= Round(limiarOtimo) then
+        begin
+          Image2.Canvas.Pixels[i,j] := Image1.Canvas.Pixels[i,j];
+        end
+        else
+        begin
+          Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
+        end;
+      end;
+end;
+
+(*Método Otsu com Binarização*)
+procedure TForm1.MenuItem33Click(Sender: TObject);
+var totalTons: array[0..255] of integer;
+var probabilidadeTons: array[0..255] of float;
+var i, j: integer;
+var miTesao, varianciaTotal, w0, w1, miTesinho, u0, u1, varianciaLocal, minNi, limiarOtimo, ni, maxVarEntre : float;
+begin
+  for i := 0 to 255 do
+  begin
+    totalTons[i] := 0;
+  end;
+
+  for i := 0 to 511 do
+    for j := 0 to 511 do
+    begin
+      totalTons[GetRValue(Image1.Canvas.Pixels[i,j])] := totalTons[GetRValue(Image1.Canvas.Pixels[i,j])] + 1;
+    end;
+
+  for i := 0 to 255 do
+  begin
+    probabilidadeTons[i] :=  totalTons[i] / (512 * 512);
+  end;
+
+  miTesao := 0.0;
+  for i := 0 to 255 do
+  begin
+    miTesao := miTesao + i * probabilidadeTons[i];
+  end;
+
+  varianciaTotal := 0.0;
+  for i := 0 to 255 do
+  begin
+    varianciaTotal := varianciaTotal + ((i - miTesao) * (i - miTesao)) * probabilidadeTons[i];
+  end;
+
+  maxVarEntre := -1.0;
+  limiarOtimo := 0;
+
+  for j := 0 to 255 do
+  begin
+    w0 := 0.0;
+    miTesinho := 0.0;
+
+    for i := 0 to j do
+    begin
+      w0 := w0 + probabilidadeTons[i];
+    end;
+
+    w1 := 1.0 - w0;
+
+    for i := 0 to j do
+    begin
+      miTesinho := miTesinho + i * probabilidadeTons[i];
+    end;
+
+    if w0 > 0 then
+    begin
+       u0 := miTesinho / w0;
+    end
+    else
+    begin
+      u0 := 0.0;
+    end;
+
+    if w1 > 0 then
+    begin
+      u1 := (miTesao - miTesinho) / w1;
+    end
+    else
+    begin
+      u1 := 0.0;
+    end;
+
+    varianciaLocal := w0 * w1 * ((u1 - u0) * (u1 - u0));
+
+    if varianciaTotal > 0 then
+    begin
+       ni := varianciaLocal / varianciaTotal;
+    end
+    else
+    begin
+      ni := MaxFloat;
+    end;
+
+    if varianciaLocal > maxVarEntre then
+    begin
+      maxVarEntre := varianciaLocal;
+      limiarOtimo := j;
+    end;
+  end;
+
+  for i := 0 to 511 do
+      for j := 0 to 511 do
+      begin
+        if GetRValue(Image1.Canvas.Pixels[i,j]) >= Round(limiarOtimo) then
+        begin
+          Image2.Canvas.Pixels[i,j] := RGB(255,255,255);
+        end
+        else
+        begin
+          Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
+        end;
       end;
 end;
 

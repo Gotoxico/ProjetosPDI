@@ -274,6 +274,14 @@ object Form1: TForm1
         Caption = 'Laplaciano e Laplaciano Gaussiana Side by Side'
         OnClick = MenuItem31Click
       end
+      object MenuItem32: TMenuItem
+        Caption = 'Método Otsu com Limiarização'
+        OnClick = MenuItem32Click
+      end
+      object MenuItem33: TMenuItem
+        Caption = 'Método Otsu com Binarização'
+        OnClick = MenuItem33Click
+      end
     end
   end
   object OpenDialog1: TOpenDialog
