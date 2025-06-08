@@ -58,6 +58,7 @@ type
     MenuItem31: TMenuItem;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
+    MenuItem34: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
@@ -110,6 +111,7 @@ type
     procedure MenuItem31Click(Sender: TObject);
     procedure MenuItem32Click(Sender: TObject);
     procedure MenuItem33Click(Sender: TObject);
+    procedure MenuItem34Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
@@ -1419,6 +1421,249 @@ begin
         begin
           Image2.Canvas.Pixels[i,j] := RGB(0,0,0);
         end;
+      end;
+end;
+
+(*Esqueleto com Zhang e Suen*)
+procedure TForm1.MenuItem34Click(Sender: TObject);
+var i, j, p1, p2, p3, p4, p5, p6, p7, p8, p9, N, S, Produto1, Produto2 : integer;
+var ImagemAtual, MarcadosParaExcluir: array[0..319, 0..239] of integer;
+var Alterado : Boolean;
+begin
+  for i := 0 to 319 do
+      for j := 0 to 239 do
+      begin
+        ImagemAtual[i, j] := GetRValue(Image1.Canvas.Pixels[i,j]);
+      end;
+
+  Alterado := True;
+  while Alterado do
+  begin
+    Alterado := False;
+    (*Passo1*)
+    for i := 0 to 319 do
+        for j := 0 to 239 do
+        begin
+          MarcadosParaExcluir[i,j] := 0;
+        end;
+
+    for i := 1 to 318 do
+        for j := 1 to 238 do
+        begin
+          p1 := ImagemAtual[i, j];
+          if p1 <> 255 then Continue;
+
+          p2 := ImagemAtual[i - 1, j];
+          p3 := ImagemAtual[i - 1, j + 1];
+          p4 := ImagemAtual[i, j + 1];
+          p5 := ImagemAtual[i + 1, j + 1];
+          p6 := ImagemAtual[i + 1, j];
+          p7 := ImagemAtual[i + 1, j - 1];
+          p8 := ImagemAtual[i, j - 1];
+          p9 := ImagemAtual[i - 1, j - 1];
+
+          N := 0;
+          if p9 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p2 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p3 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p8 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p4 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p7 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p6 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p5 <> 0 then
+          begin
+             N := N + 1;
+          end;
+
+          S := 0;
+          if (p2 = 0) and (p3 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p3 = 0) and (p4 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p4 = 0) and (p5 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p5 = 0) and (p6 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p6 = 0) and (p7 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p7 = 0) and (p8 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p8 = 0) and (p9 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p9 = 0) and (p2 = 255) then
+          begin
+            S := S + 1;
+          end;
+
+          Produto1 := p2 * p4 * p6;
+          Produto2 := p4 * p6 * p8;
+
+          if (N >= 2) and (N <= 6) and (S = 1) and (Produto1 = 0) and (Produto2 = 0) then
+          begin
+            MarcadosParaExcluir[i, j] := 1;
+            Alterado := True;
+          end;
+        end;
+
+    for i := 1 to 318 do
+        for j := 1 to 238 do
+        begin
+          if MarcadosParaExcluir[i,j] = 1 then
+          begin
+            ImagemAtual[i, j] := 0;
+          end;
+        end;
+
+    (*Passo2*)
+    for i := 0 to 319 do
+        for j := 0 to 239 do
+        begin
+          MarcadosParaExcluir[i,j] := 0;
+        end;
+
+    for i := 1 to 318 do
+        for j := 1 to 238 do
+        begin
+          p1 := ImagemAtual[i, j];
+          if p1 <> 255 then Continue;
+
+          p2 := ImagemAtual[i - 1, j];
+          p3 := ImagemAtual[i - 1, j + 1];
+          p4 := ImagemAtual[i, j + 1];
+          p5 := ImagemAtual[i + 1, j + 1];
+          p6 := ImagemAtual[i + 1, j];
+          p7 := ImagemAtual[i + 1, j - 1];
+          p8 := ImagemAtual[i, j - 1];
+          p9 := ImagemAtual[i - 1, j - 1];
+
+          N := 0;
+          if p9 <> 0 then
+          begin;
+             N := N + 1;
+          end;
+          if p2 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p3 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p8 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p4 <> 0 then
+          begin;
+             N := N + 1;
+          end;
+          if p7 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p6 <> 0 then
+          begin
+             N := N + 1;
+          end;
+          if p5 <> 0 then
+          begin
+             N := N + 1;
+          end;
+
+          S := 0;
+          if (p2 = 0) and (p3 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p3 = 0) and (p4 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p4 = 0) and (p5 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p5 = 0) and (p6 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p6 = 0) and (p7 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p7 = 0) and (p8 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p8 = 0) and (p9 = 255) then
+          begin
+            S := S + 1;
+          end;
+          if (p9 = 0) and (p2 = 255) then
+          begin
+            S := S + 1;
+          end;
+
+          Produto1 := p2 * p4 * p8;
+          Produto2 := p2 * p6 * p8;
+
+          if (N >= 2) and (N <= 6) and (S = 1) and (Produto1 = 0) and (Produto2 = 0) then
+          begin
+            MarcadosParaExcluir[i, j] := 1;
+            Alterado := True;
+          end;
+        end;
+
+    for i := 1 to 318 do
+        for j := 1 to 238 do
+        begin
+          if MarcadosParaExcluir[i,j] = 1 then
+          begin
+            ImagemAtual[i, j] := 0;
+          end;
+        end;
+
+  end;
+
+  for i := 0 to 319 do
+      for j := 0 to 239 do
+      begin
+        Image2.Canvas.Pixels[i, j] := RGB(ImagemAtual[i, j], ImagemAtual[i, j], ImagemAtual[i, j]);
       end;
 end;
 

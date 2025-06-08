@@ -282,6 +282,10 @@ object Form1: TForm1
         Caption = 'Método Otsu com Binarização'
         OnClick = MenuItem33Click
       end
+      object MenuItem34: TMenuItem
+        Caption = 'Esqueleto com Zhang e Suen'
+        OnClick = MenuItem34Click
+      end
     end
   end
   object OpenDialog1: TOpenDialog
